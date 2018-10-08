@@ -1,7 +1,16 @@
-import * as Sequelize from "sequelize";
+import Sequelize from "sequelize";
 import db from "../../db/models/db";
 
-const User = db.define("User", {
+export interface IUser extends Sequelize.Model<IUser> {
+  id?: number;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+}
+
+export const User = db.define<User, IUser>("user", {
+ 
   firstName: {
     type: Sequelize.STRING,
     allowNull: false,

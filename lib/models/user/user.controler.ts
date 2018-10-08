@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from 'express';
 // import { apiErrorHandler } from '../handlers/errorHandler';
-import UserService from './user.service';
+import UserService from './service/user.service';
 // import loggers from '../../tools/loggers';
 
 export default class UserControler {
