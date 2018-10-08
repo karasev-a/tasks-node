@@ -1,4 +1,4 @@
-import Task from "../task";
+import { Task, ITask} from "../task";
 
 class TaskService {
 
@@ -6,7 +6,7 @@ class TaskService {
         return Task.findAll();
     }
 
-    public async getOneTask(taskId) {
+    public async getOneTask(taskId: number) {
         return Task.findOne({
             where: {
                 id: taskId,
@@ -14,11 +14,17 @@ class TaskService {
         });
     }
 
-    public async deleteTaskById(taskId) {
-        return Task;
+    public async deleteTaskById(taskId: number) {
+        return  Number.isInteger(taskId)
+        ? Task.destroy({
+            where: {
+                id: taskId,
+            },
+        })
+        : null;
     }
 
-    public async updateTask(taskId, task) {
+    public async updateTask(taskId: number, task: ITask) {
         if (task && Number.isInteger(taskId)) {
             delete task.id;
             const result = await Task.update(task, {
@@ -30,7 +36,7 @@ class TaskService {
         }
     }
 
-    public async createTask(task) {
+    public async createTask(task: ITask) {
         if (task) {
             return Task.create(task);
         }

@@ -1,7 +1,21 @@
-import * as Sequelize from "sequelize";
+import Sequelize from "sequelize";
 import db from "../../db/models/db";
 
-const Task = db.define("Task", {
+export interface ITask extends Sequelize.Model<ITask> {
+  id?: string;
+  title?: string;
+  people?: number;
+  price?: number;
+  description?: string;
+  date?: Date;
+  subscrebedPeople?: number;
+  status?: string;
+  archived?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export const Task = db.define("Task", {
   id: {
     allowNull: false,
     autoIncrement: true,
@@ -50,5 +64,3 @@ const Task = db.define("Task", {
 Task.associate = (models) => {
   // associations can be defined here
 };
-
-export default Task;
