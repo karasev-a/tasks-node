@@ -2,7 +2,7 @@ module.exports = {
   development: {
     username: "root",
     password: "root",
-    database: "tasks",
+    database: "orange",
     dialect: "mysql",
     seederStorage: "sequelize",
 

@@ -1,7 +1,7 @@
-import * as Sequelize from "sequelize";
+import Sequelize from "sequelize";
 import db from "../../db/models/db";
 
-const Role = db.define("Role", {
+export const Role = db.define("Role", {
   name: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -23,4 +23,4 @@ Role.associate = (models) => {
   // associations can be defined here
 };
 
-export default Role;
+// export default Role;

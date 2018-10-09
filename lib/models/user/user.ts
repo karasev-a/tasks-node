@@ -1,7 +1,7 @@
-import * as Sequelize from "sequelize";
+import Sequelize from "sequelize";
 import db from "../../db/models/db";
 
-const User = db.define("User", {
+export const User = db.define("User", {
   firstName: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -52,4 +52,4 @@ User.associate = (models) => {
   // associations can be defined here
 };
 
-export default User;
+// export default User;

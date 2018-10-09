@@ -1,6 +1,6 @@
-import * as Sequelize from "sequelize";
+import Sequelize from "sequelize";
 
-export default  new Sequelize("tasks", "root", "root", {
+export default  new Sequelize("orange", "root", "root", {
     host: "127.0.0.1",
     dialect: "mysql",
     pool: {

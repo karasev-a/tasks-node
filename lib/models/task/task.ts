@@ -1,5 +1,6 @@
 import Sequelize from "sequelize";
 import db from "../../db/models/db";
+import { Category } from "../category/category";
 
 export interface ITask extends Sequelize.Model<ITask> {
   id?: string;
@@ -10,10 +11,14 @@ export interface ITask extends Sequelize.Model<ITask> {
   date?: Date;
   subscrebedPeople?: number;
   status?: string;
+  userId: number;
+  categotyId: number;
   archived?: Date;
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+console.log("def task");
 
 export const Task = db.define("Task", {
   id: {
@@ -48,9 +53,22 @@ export const Task = db.define("Task", {
   status: {
     type: Sequelize.ENUM,
     values: ["OnReview", "Open", "Pending", "Done", "Decline"],
+    defaultValue: "OnReview",
   },
   subscrebedPeople: {
     type: Sequelize.INTEGER,
+  },
+  // userId: {
+  //   type: Sequelize.INTEGER,
+  //   allowNull: false,
+  // },
+  categoryId: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    references: {
+      model: Category,
+      key: "id",
+    },
   },
   createdAt: {
     allowNull: false,
@@ -61,6 +79,8 @@ export const Task = db.define("Task", {
     type: Sequelize.DATE,
   },
 }, {});
-Task.associate = (models) => {
-  // associations can be defined here
+Task.associate = () => {
+  // Task.belongsTo(Category);
+  Task.belongsTo(Category, { foreignKey: "categoryId", targetKey: "id" });
+  // Task.belongsToMany(models.User, { through: "UsersTasks", foreignKey: "taskId" });
 };
