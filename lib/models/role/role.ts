@@ -1,7 +1,19 @@
-import Sequelize from "sequelize";
+import * as Sequelize from "sequelize";
 import db from "../../db/models/db";
+import {User} from "../user/user";
 
-export const Role = db.define("Role", {
+export interface IRoleAttributes {
+  id?: string;
+  name?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface IRoleInstance extends Sequelize.Instance<IRoleAttributes> {
+  dataValues: IRoleAttributes;
+}
+
+export const Role = db.define<IRoleInstance, IRoleAttributes>("Role", {
   name: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -19,8 +31,6 @@ export const Role = db.define("Role", {
     type: Sequelize.DATE,
   },
 }, {});
-Role.associate = (models) => {
-  // associations can be defined here
+Role.associate = () => {
+  // Role.hasMany(User, { foreignKey: "roleId", sourceKey: "id" });
 };
-
-// export default Role;

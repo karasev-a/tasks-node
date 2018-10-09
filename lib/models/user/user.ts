@@ -1,5 +1,8 @@
-import Sequelize from "sequelize";
+import * as Sequelize from "sequelize";
 import db from "../../db/models/db";
+import {Task} from "../task/task";
+import {Role} from "../role/role";
+import {Category} from "../category/category";
 
 interface IUserAttributes {
   id?: number;
@@ -8,6 +11,7 @@ interface IUserAttributes {
   password: string;
   phone: string;
   email: string;
+  roleId: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -16,7 +20,7 @@ interface IUserInstance extends Sequelize.Instance<IUserAttributes> {
   dataValues: IUserAttributes;
 }
 
-const User = db.define<IUserInstance, IUserAttributes>("user", {
+export const User = db.define<IUserInstance, IUserAttributes>("user", {
   firstName: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -53,6 +57,14 @@ const User = db.define<IUserInstance, IUserAttributes>("user", {
       is: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/,
     },
   },
+  roleId: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    references: {
+      model: Role,
+      key: "id",
+    },
+  },
   createdAt: {
     allowNull: false,
     type: Sequelize.DATE,
@@ -64,7 +76,7 @@ const User = db.define<IUserInstance, IUserAttributes>("user", {
 },
 );
 User.associate = (models) => {
-  // associations can be defined here
+  User.hasMany(Task, { foreignKey: "userId", sourceKey: "id" });
+  User.belongsTo(Role, { foreignKey: "roleId", targetKey: "id" });
+  User.belongsToMany(Category, { through: "UsersCategory", foreignKey: "userId" });
 };
-
-// export default User;

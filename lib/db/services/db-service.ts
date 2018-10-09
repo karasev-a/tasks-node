@@ -8,9 +8,11 @@ class DBService {
             await db.authenticate();
             await db.sync();
             // await MigrationService.runMigrations();
-            // await MigrationService.runSeeders();
+            await MigrationService.runSeeders();
         } catch (err) {
-          global.logger.error("DB init ERROR");
+            console.log(err);
+            global.logger.error("DB init ERROR");
+            // global.logger.error(err);
         }
     }
 }

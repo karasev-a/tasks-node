@@ -1,4 +1,4 @@
-import { Category, ICategory} from "../category";
+import { Category, ICategoryAttributes} from "../category";
 
 class TaskService {
 
@@ -24,7 +24,7 @@ class TaskService {
         : null;
     }
 
-    public async updateCategory(categoryId: number, category: ICategory) {
+    public async updateCategory(categoryId: number, category: ICategoryAttributes) {
         if (category && Number.isInteger(categoryId)) {
             delete category.id;
             const result = await Category.update(category, {
@@ -36,7 +36,7 @@ class TaskService {
         }
     }
 
-    public async createCategory(category: ICategory) {
+    public async createCategory(category: ICategoryAttributes) {
         if (category) {
             return Category.create(category);
         }

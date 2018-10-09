@@ -1,8 +1,9 @@
-import Sequelize from "sequelize";
+import * as Sequelize from "sequelize";
 import db from "../../db/models/db";
 import { Category } from "../category/category";
+import { User } from "../user/user";
 
-export interface ITask extends Sequelize.Model<ITask> {
+export interface ITaskAttributes {
   id?: string;
   title?: string;
   people?: number;
@@ -11,16 +12,19 @@ export interface ITask extends Sequelize.Model<ITask> {
   date?: Date;
   subscrebedPeople?: number;
   status?: string;
-  userId: number;
-  categotyId: number;
-  archived?: Date;
+  userId?: number;
+  categoryId?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
+export interface ITaskInstance extends Sequelize.Instance<ITaskAttributes> {
+  dataValues: ITaskAttributes;
+}
+
 console.log("def task");
 
-export const Task = db.define("Task", {
+export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
   id: {
     allowNull: false,
     autoIncrement: true,
@@ -58,10 +62,14 @@ export const Task = db.define("Task", {
   subscrebedPeople: {
     type: Sequelize.INTEGER,
   },
-  // userId: {
-  //   type: Sequelize.INTEGER,
-  //   allowNull: false,
-  // },
+  userId: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: "id",
+    },
+  },
   categoryId: {
     type: Sequelize.INTEGER,
     allowNull: false,
@@ -82,5 +90,6 @@ export const Task = db.define("Task", {
 Task.associate = () => {
   // Task.belongsTo(Category);
   Task.belongsTo(Category, { foreignKey: "categoryId", targetKey: "id" });
+  Task.belongsTo(User, { foreignKey: "userId", targetKey: "id" });
   // Task.belongsToMany(models.User, { through: "UsersTasks", foreignKey: "taskId" });
 };

@@ -2,7 +2,7 @@ import * as Sequelize from "sequelize";
 import * as dotenv from "dotenv";
 
 // Load environment variables from .env file, where API keys and passwords are configured
-dotenv.config({ path: "settings.env" });
+dotenv.config({ path: ".env" });
 
 export default new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
     host: "127.0.0.1",

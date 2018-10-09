@@ -1,4 +1,4 @@
-import { Task, ITask} from "../task";
+import { Task, ITaskAttributes } from "../task";
 
 class TaskService {
 
@@ -24,7 +24,7 @@ class TaskService {
         : null;
     }
 
-    public async updateTask(taskId: number, task: ITask) {
+    public async updateTask(taskId: number, task: ITaskAttributes) {
         if (task && Number.isInteger(taskId)) {
             delete task.id;
             const result = await Task.update(task, {
@@ -36,7 +36,7 @@ class TaskService {
         }
     }
 
-    public async createTask(task: ITask) {
+    public async createTask(task: ITaskAttributes) {
         if (task) {
             return Task.create(task);
         }
