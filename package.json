@@ -1,0 +1,34 @@
+{
+  "name": "tasks-server",
+  "version": "1.0.0",
+  "description": "server api for project \"tasks\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "dev": "ts-node ./server.ts",
+    "watch": "ts-node-dev ./server.ts",
+    "start": "nodemon ./dist/server.js",
+    "prod": "npm run build && npm run start",
+    "seeders": "node_modules/.bin/sequelize db:seed:all",
+    "migrations": "node_modules/.bin/sequelize db:migrate"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/dotenv": "^4.0.2",
+    "@types/express": "^4.16.0",
+    "@types/node": "^10.11.4",
+    "@types/sequelize": "^4.27.27",
+    "dotenv": "^6.1.0",
+    "express": "^4.16.3",
+    "mysql2": "^1.6.1",
+    "nodemon": "^1.18.4",
+    "sequelize": "^4.39.0",
+    "sequelize-cli": "^4.1.1",
+    "ts-node": "^7.0.1",
+    "ts-node-dev": "^1.0.0-pre.30",
+    "typescript": "^3.1.1",
+    "winston": "^3.1.0"
+  }
+}
