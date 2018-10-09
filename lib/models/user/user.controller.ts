@@ -3,7 +3,7 @@ import { NextFunction, Request, Response, Router } from "express";
 import UserService from "./service/user.service";
 // import loggers from '../../tools/loggers';
 
-export default class UserControler {
+class UserController {
     // all
     public async getAll(req: Request, res: Response, next: NextFunction) {
         res.status(200).send(await UserService.getAll({ order: ["seqNo"] }));
@@ -24,16 +24,18 @@ export default class UserControler {
     }
 
     // Post
-    public async createUser(req: Request, res: Response, next: NextFunction) {
+    public async create(req: Request, res: Response, next: NextFunction) {
         const model = req.body;
         const result = await UserService.create(model);
         res.status(201).send(result);
     }
 
      // Put
-     public async updaeteUser(req: Request, res: Response, next: NextFunction) {
+     public async updaete(req: Request, res: Response, next: NextFunction) {
         const userId = parseInt(req.params.id, 10);
         const model = req.body;
         res.status(200).send(await UserService.update(userId, model));
     }
 }
+
+export default new UserController();

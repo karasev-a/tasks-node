@@ -8,8 +8,8 @@ interface IUserAttributes {
   password: string;
   phone: string;
   email: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface IUserInstance extends Sequelize.Instance<IUserAttributes> {
