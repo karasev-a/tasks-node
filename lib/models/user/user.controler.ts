@@ -1,74 +1,39 @@
-import { NextFunction, Request, Response, Router } from 'express';
+import { NextFunction, Request, Response, Router } from "express";
 // import { apiErrorHandler } from '../handlers/errorHandler';
-import UserService from './service/user.service';
+import UserService from "./service/user.service";
 // import loggers from '../../tools/loggers';
 
 export default class UserControler {
-    constructor() { }
-
     // all
     public async getAll(req: Request, res: Response, next: NextFunction) {
-        UserService.getAll({ order: ['seqNo'] }) // should we use option
-            .then(result => res.json(result))
-            .catch(err => {
-                //   logger.info(err, req, res, 'Fetch All Users failed.')
-            });
+        res.status(200).send(await UserService.getAll({ order: ["seqNo"] }));
     }
 
     // by Id
     public async getById(req: Request, res: Response, next: NextFunction) {
-        UserService.getById(req.params.id)
-            .then(result => res.json(result))
-            .catch(err => {
-                //   logger.info(err, req, res, 'get by id User failed.')
-        });
+        const userId = parseInt(req.params.id, 10);
+        const user = await UserService.getById(userId);
+        user ? res.status(200).send(user) : res.sendStatus(404);
     }
 
-    // getLessonById(req: Request, res: any, next: NextFunction) {
-    //     UserService.getLessonById(req.params.id)
-    //         .then(result => {
-    //             if (result) {
-    //                 return res.json(result);
-    //             } else {
-    //                 res.status(404).send(`Lesson ${req.params.id} not found.`);
-    //             }
-    //         })
-    //         .catch(err => {
-    //             apiErrorHandler(err, req, res, `Lesson ${req.params.id} failed.`);
-    //         });
-    // }
+    // delete
+    public async delete(req: Request, res: Response, next: NextFunction) {
+        const userId = parseInt(req.params.id, 10);
+        const result = await UserService.delete(userId);
+        result ? res.status(204).end() : res.status(404);
+    }
 
-    // createLesson(req: Request, res: Response, next: NextFunction) {
-    //     UserService.createLesson(req['value']['body'])
-    //         .then(result => res.json(result))
-    //         .catch(err => {
-    //             apiErrorHandler(err, req, res, 'Creation of Lesson failed.');
-    //         });
-    // }
+    // Post
+    public async createUser(req: Request, res: Response, next: NextFunction) {
+        const model = req.body;
+        const result = await UserService.create(model);
+        res.status(201).send(result);
+    }
 
-    // updateLesson(req: Request, res: Response, next: NextFunction) {
-    //     UserService.updateLesson(req.params.id, req['value']['body'])
-    //         .then(result => res.json(result))
-    //         .catch(err => {
-    //             apiErrorHandler(
-    //                 err,
-    //                 req,
-    //                 res,
-    //                 `updation of Lesson ${req.params.id} is failed.`
-    //             );
-    //         });
-    // }
-
-    // deleteLesson(req: Request, res: Response, next: NextFunction) {
-    //     UserService.deleteLesson(req.params.id)
-    //         .then(result => res.json(result))
-    //         .catch(err => {
-    //             apiErrorHandler(
-    //                 err,
-    //                 req,
-    //                 res,
-    //                 `deletion of Lesson ${req.params.id}  is failed.`
-    //             );
-    //         });
-    // }
+     // Put
+     public async updaeteUser(req: Request, res: Response, next: NextFunction) {
+        const userId = parseInt(req.params.id, 10);
+        const model = req.body;
+        res.status(200).send(await UserService.update(userId, model));
+    }
 }

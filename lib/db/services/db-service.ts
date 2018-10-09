@@ -7,8 +7,8 @@ class DBService {
         try {
             await db.authenticate();
             await db.sync();
-            await MigrationService.runMigrations();
-            await MigrationService.runSeeders();
+            // await MigrationService.runMigrations();
+            // await MigrationService.runSeeders();
         } catch (err) {
           global.logger.error("DB init ERROR");
         }

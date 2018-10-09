@@ -1,7 +1,6 @@
-import User from '../user';
+import User from "../user";
 
 class UserService {
-    constructor() { }
 
     // all
     public async getAll(options) {
@@ -14,37 +13,37 @@ class UserService {
             ? User.findOne({
                 where: {
                     id: UserId,
-                }
+                },
             })
             : null;
     }
 
     // delete
-    async delete(userId) {
+    public async delete(userId) {
     return Number.isInteger(userId)
     ? User.destroy({
         where: {
-            id: userId
-        }
+            id: userId,
+        },
     })
-    :null;
+    : null;
     }
 
     // Post
-    async create(model) {
+    public async create(model) {
         if (model) {
             if (!model.id) {
                 return User.create(model);
             }
-            throw new Error('User already exists');
+            throw new Error("User already exists");
         }
     }
 
     // Put
-    async update(userId, model) {
-        if(model && Number.isInteger(userId)) {
+    public async update(userId, model) {
+        if (model && Number.isInteger(userId)) {
             delete model[userId];
-            let result = await User.update(model, {where: {id: userId}});
+            const result = await User.update(model, {where: {id: userId}});
             return !!result[0];
         }
     }

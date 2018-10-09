@@ -50,3 +50,6 @@ testem.log
 # logs
 \logs
 dist
+
+# env
+*.env
