@@ -3,6 +3,7 @@ import db from "../../db/models/db";
 import {Task} from "../task/task";
 import {Role} from "../role/role";
 import {Category} from "../category/category";
+import {UsersCategories} from "../users-categories/usersCategories";
 
 interface IUserAttributes {
   id?: number;
@@ -39,23 +40,23 @@ export const User = db.define<IUserInstance, IUserAttributes>("user", {
     type: Sequelize.STRING,
     allowNull: false,
     unique: true,
-    validate: {
-      isEmail: true,
-    },
+    // validate: {
+    //   isEmail: true,
+    // },
   },
   password: {
     type: Sequelize.STRING,
     allowNull: false,
-    validate: {
-      notEmpty: true,
-    },
+    // validate: {
+    //   notEmpty: true,
+    // },
   },
   phone: {
     type: Sequelize.STRING,
-    allowNull: false,
-    validate: {
-      is: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/,
-    },
+    allowNull: true,
+    // validate: {
+    //   is: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/,
+    // },
   },
   roleId: {
     type: Sequelize.INTEGER,
@@ -78,5 +79,5 @@ export const User = db.define<IUserInstance, IUserAttributes>("user", {
 User.associate = (models) => {
   User.hasMany(Task, { foreignKey: "userId", sourceKey: "id" });
   User.belongsTo(Role, { foreignKey: "roleId", targetKey: "id" });
-  User.belongsToMany(Category, { through: "UsersCategory", foreignKey: "userId" });
+  User.belongsToMany(Category, { through: "UsersCategories", foreignKey: "userId" });
 };

@@ -2,6 +2,7 @@ import * as Sequelize from "sequelize";
 import db from "../../db/models/db";
 import { Task } from "../task/task";
 import {User} from "../user/user";
+import {UsersCategories} from "../users-categories/usersCategories";
 
 export interface ICategoryAttributes {
   id?: string;
@@ -12,8 +13,6 @@ export interface ICategoryAttributes {
 export interface ICategoryInstance extends Sequelize.Instance<ICategoryAttributes> {
   dataValues: ICategoryAttributes;
 }
-
-console.log("def category");
 
 export const Category = db.define<ICategoryInstance, ICategoryAttributes>("Category", {
   id: {

@@ -22,15 +22,13 @@ export interface ITaskInstance extends Sequelize.Instance<ITaskAttributes> {
   dataValues: ITaskAttributes;
 }
 
-console.log("def task");
-
 export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
-  id: {
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
-    type: Sequelize.INTEGER,
-  },
+  // id: {
+  //   allowNull: false,
+  //   autoIncrement: true,
+  //   primaryKey: true,
+  //   type: Sequelize.INTEGER,
+  // },
   title: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -41,9 +39,9 @@ export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
   },
   people: {
     type: Sequelize.INTEGER,
-    validate: {
-      min: 1, max: 5,
-    },
+    // validate: {
+    //   min: 1, max: 5,
+    // },
   },
   price: {
     type: Sequelize.FLOAT,
@@ -61,6 +59,7 @@ export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
   },
   subscrebedPeople: {
     type: Sequelize.INTEGER,
+    defaultValue: 0,
   },
   userId: {
     type: Sequelize.INTEGER,
