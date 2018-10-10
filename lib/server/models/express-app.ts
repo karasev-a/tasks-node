@@ -3,7 +3,8 @@ import * as express from "express";
 import { NextFunction, Request, Response, Router } from "express";
 import * as bodyParser from "body-parser";
 import routes from "../../routes/index";
-
+import {UsersCategories} from "../../models/users-categories/usersCategories";
+const us = UsersCategories;
 class App {
 
   public app: express.Application;
@@ -23,7 +24,8 @@ class App {
       res.setHeader("Access-Control-Allow-Credentials", "true");
       res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
       res.setHeader("Access-Control-Allow-Headers",
-      `Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers`);
+      "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, "
+      + "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
       next();
     });
 

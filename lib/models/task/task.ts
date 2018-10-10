@@ -1,13 +1,34 @@
 import * as Sequelize from "sequelize";
 import db from "../../db/models/db";
+import { Category } from "../category/category";
+import { User } from "../user/user";
 
-const Task = db.define("Task", {
-  id: {
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
-    type: Sequelize.INTEGER,
-  },
+export interface ITaskAttributes {
+  id?: string;
+  title?: string;
+  people?: number;
+  price?: number;
+  description?: string;
+  date?: Date;
+  subscrebedPeople?: number;
+  status?: string;
+  userId?: number;
+  categoryId?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface ITaskInstance extends Sequelize.Instance<ITaskAttributes> {
+  dataValues: ITaskAttributes;
+}
+
+export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
+  // id: {
+  //   allowNull: false,
+  //   autoIncrement: true,
+  //   primaryKey: true,
+  //   type: Sequelize.INTEGER,
+  // },
   title: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -18,9 +39,9 @@ const Task = db.define("Task", {
   },
   people: {
     type: Sequelize.INTEGER,
-    validate: {
-      min: 1, max: 5,
-    },
+    // validate: {
+    //   min: 1, max: 5,
+    // },
   },
   price: {
     type: Sequelize.FLOAT,
@@ -34,9 +55,27 @@ const Task = db.define("Task", {
   status: {
     type: Sequelize.ENUM,
     values: ["OnReview", "Open", "Pending", "Done", "Decline"],
+    defaultValue: "OnReview",
   },
   subscrebedPeople: {
     type: Sequelize.INTEGER,
+    defaultValue: 0,
+  },
+  userId: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: "id",
+    },
+  },
+  categoryId: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    references: {
+      model: Category,
+      key: "id",
+    },
   },
   createdAt: {
     allowNull: false,
@@ -47,8 +86,9 @@ const Task = db.define("Task", {
     type: Sequelize.DATE,
   },
 }, {});
-Task.associate = (models) => {
-  // associations can be defined here
+Task.associate = () => {
+  // Task.belongsTo(Category);
+  Task.belongsTo(Category, { foreignKey: "categoryId", targetKey: "id" });
+  Task.belongsTo(User, { foreignKey: "userId", targetKey: "id" });
+  // Task.belongsToMany(models.User, { through: "UsersTasks", foreignKey: "taskId" });
 };
-
-export default Task;

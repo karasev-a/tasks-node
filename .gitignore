@@ -49,7 +49,9 @@ testem.log
 
 # logs
 \logs
+<<<<<<< .gitignore
 dist
 
 # env
 *.env
+

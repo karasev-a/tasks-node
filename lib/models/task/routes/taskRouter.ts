@@ -2,8 +2,6 @@ import { Router } from "express";
 
 import taskController from "../taskController";
 
-import Task from "../task";
-
 const router: Router = Router();
 
 router.get("/:taskId", taskController.getOneTask);

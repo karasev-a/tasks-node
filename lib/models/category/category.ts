@@ -1,7 +1,26 @@
 import * as Sequelize from "sequelize";
 import db from "../../db/models/db";
+import { Task } from "../task/task";
+import {User} from "../user/user";
+import {UsersCategories} from "../users-categories/usersCategories";
 
-const Category = db.define("Category", {
+export interface ICategoryAttributes {
+  id?: string;
+  name?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+export interface ICategoryInstance extends Sequelize.Instance<ICategoryAttributes> {
+  dataValues: ICategoryAttributes;
+}
+
+export const Category = db.define<ICategoryInstance, ICategoryAttributes>("Category", {
+  id: {
+    allowNull: false,
+    autoIncrement: true,
+    primaryKey: true,
+    type: Sequelize.INTEGER,
+  },
   name: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -19,8 +38,9 @@ const Category = db.define("Category", {
     type: Sequelize.DATE,
   },
 }, {});
-Category.associate = (models) => {
-  // associations can be defined here
+Category.associate = () => {
+   Category.hasMany(Task, { foreignKey: "categoryId", sourceKey: "id" });
+   Category.belongsToMany(User, { through: "UsersCategories", foreignKey: "categoryId" });
 };
 
-export default Category;
+// Category.hasMany(Task, { foreignKey: "taskId", targetKey: "id" });

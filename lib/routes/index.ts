@@ -1,13 +1,15 @@
 import * as express from "express";
 
-// import * as userRouter from  "../models/user/routes/userRouter";
+import roleRouter from "../models/role/routes/roleRouter";
 import taskRouter from "../models/task/routes/taskRouter";
-// import * as categoryRouter from "../models/category/routes/categoryRouter";
+import categoryRouter from "../models/category/routes/categoryRouter";
+import userRouter from "../models/user/routes/userRouter";
 
 const router = express.Router();
 
 router.use("/tasks", taskRouter);
-// router.use("/users", userRouter);
-// router.use("/categoty", categoryRouter);
+router.use("/users", userRouter);
+router.use("/categories", categoryRouter);
+router.use("/roles", roleRouter);
 
 export default router;
