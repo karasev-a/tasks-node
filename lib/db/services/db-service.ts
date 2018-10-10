@@ -10,7 +10,7 @@ class DBService {
             // await MigrationService.runMigrations();
             await MigrationService.runSeeders();
         } catch (err) {
-            console.log(err);
+            global.logger(err);
             global.logger.error("DB init ERROR");
             // global.logger.error(err);
         }

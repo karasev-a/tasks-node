@@ -7,14 +7,14 @@ import {UsersCategories} from "../users-categories/usersCategories";
 
 interface IUserAttributes {
   id?: number;
-  firstName: string;
-  lastName: string;
-  password: string;
-  phone: string;
-  email: string;
-  roleId: number;
-  createdAt: Date;
-  updatedAt: Date;
+  firstName?: string;
+  lastName?: string;
+  password?: string;
+  phone?: string;
+  email?: string;
+  roleId?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 interface IUserInstance extends Sequelize.Instance<IUserAttributes> {
@@ -40,23 +40,23 @@ export const User = db.define<IUserInstance, IUserAttributes>("user", {
     type: Sequelize.STRING,
     allowNull: false,
     unique: true,
-    // validate: {
-    //   isEmail: true,
-    // },
+    validate: {
+      isEmail: true,
+    },
   },
   password: {
     type: Sequelize.STRING,
     allowNull: false,
-    // validate: {
-    //   notEmpty: true,
-    // },
+    validate: {
+      notEmpty: true,
+    },
   },
   phone: {
     type: Sequelize.STRING,
-    allowNull: true,
-    // validate: {
-    //   is: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/,
-    // },
+    allowNull: false,
+    validate: {
+      is: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/,
+    },
   },
   roleId: {
     type: Sequelize.INTEGER,
