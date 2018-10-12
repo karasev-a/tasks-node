@@ -3,8 +3,8 @@ import {User} from "../user";
 class UserService {
 
     // all
-    public async getAll(options) {
-        return User.findAll(options); // include: [{ all: true }] ?
+    public async getAll() {
+        return User.findAll();
     }
 
     // by id

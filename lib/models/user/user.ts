@@ -76,6 +76,21 @@ export const User = db.define<IUserInstance, IUserAttributes>("user", {
   },
 },
 );
+
+// User.beforeCreate((user: IUserInstance, Options: object) => {
+//   // @todo implement bcrypt
+//   // if (user.changed("password")) {
+//     let salt;
+//     let hash;
+//     console.log("user.dataValues.password:");
+//     console.log(user.dataValues.password);
+//     salt = bcrypt.genSalt(10);
+//     hash = bcrypt.hash(user.dataValues.password, salt);
+
+//     user.dataValues.password = hash;
+//   // }
+// });
+
 User.associate = (models) => {
   User.hasMany(Task, { foreignKey: "userId", sourceKey: "id" });
   User.belongsTo(Role, { foreignKey: "roleId", targetKey: "id" });

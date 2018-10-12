@@ -6,19 +6,19 @@ import UserService from "./service/user.service";
 class UserController {
     // all
     public async getAll(req: Request, res: Response, next: NextFunction) {
-        res.status(200).send(await UserService.getAll({ order: ["seqNo"] }));
+        res.status(200).send(await UserService.getAll());
     }
 
     // by Id
     public async getById(req: Request, res: Response, next: NextFunction) {
-        const userId = parseInt(req.params.id, 10);
+        const userId = parseInt(req.params.userId, 10);
         const user = await UserService.getById(userId);
         user ? res.status(200).send(user) : res.sendStatus(404);
     }
 
     // delete
     public async delete(req: Request, res: Response, next: NextFunction) {
-        const userId = parseInt(req.params.id, 10);
+        const userId = parseInt(req.params.userId, 10);
         const result = await UserService.delete(userId);
         result ? res.status(204).end() : res.status(404);
     }
@@ -32,7 +32,7 @@ class UserController {
 
      // Put
      public async updaete(req: Request, res: Response, next: NextFunction) {
-        const userId = parseInt(req.params.id, 10);
+        const userId = parseInt(req.params.userId, 10);
         const model = req.body;
         res.status(200).send(await UserService.update(userId, model));
     }
