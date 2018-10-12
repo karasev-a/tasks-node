@@ -1,4 +1,5 @@
-import {User} from "../user";
+import { User, IUserAttributes } from "../user";
+import * as jwt from "jsonwebtoken";
 
 class UserService {
 
@@ -20,13 +21,13 @@ class UserService {
 
     // delete
     public async delete(userId) {
-    return Number.isInteger(userId)
-    ? User.destroy({
-        where: {
-            id: userId,
-        },
-    })
-    : null;
+        return Number.isInteger(userId)
+            ? User.destroy({
+                where: {
+                    id: userId,
+                },
+            })
+            : null;
     }
 
     // Post
@@ -43,8 +44,51 @@ class UserService {
     public async update(userId, model) {
         if (model && Number.isInteger(userId)) {
             delete model[userId];
-            const result = await User.update(model, {where: {id: userId}});
+            const result = await User.update(model, { where: { id: userId } });
             return !!result[0];
+        }
+    }
+
+    // check email and password
+    public async checkCredentials(credentials) {
+        const email = credentials.email;
+        const password = credentials.password;
+        const UserExists = (await User.findOne({
+            where: {
+                email,
+            },
+        })) as IUserAttributes;
+
+        if (UserExists) {
+            if (UserExists.password === password) {
+                return UserExists;
+            } else {
+                // wrong password try again
+                // or reset you password
+                return false;
+            }
+        } else {
+            // doesn't exists
+        }
+    }
+
+    // provide token wit id and roleId
+    public async auth(user) {
+        return jwt.sign({
+            userId: user.userId,
+            roleId: user.roleId,
+        }, "secret", { expiresIn: "1h" }); // #TODO: add real secreat key
+
+        // redirect to tasks page
+        // who should ask api for tasklist?
+    }
+
+    // check token
+    public async isAuth(token) {
+        try {
+            return jwt.verify(token, "secret");
+        } catch (err) {
+            // return false;
         }
     }
 }

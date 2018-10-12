@@ -4,7 +4,8 @@ import { NextFunction, Request, Response, Router } from "express";
 import * as bodyParser from "body-parser";
 import routes from "../../routes/index";
 import {UsersCategories} from "../../models/users-categories/usersCategories";
-const us = UsersCategories;
+// const us = UsersCategories;
+
 class App {
 
   public app: express.Application;
@@ -30,11 +31,13 @@ class App {
     });
 
     this.app.use("/api/v1", routes);
-
+    this.app.use("/login", routes);
+    // 404
     this.app.use((req: Request, res: Response) => {
       res.status(404).send("404: NotFound");
     });
 
+    // 500
     this.app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
       global.logger.info(err.stack);
       res.status(500).send("500: Internal server");

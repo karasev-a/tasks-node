@@ -1,11 +1,12 @@
 import * as Sequelize from "sequelize";
 import db from "../../db/models/db";
-import {Task} from "../task/task";
-import {Role} from "../role/role";
-import {Category} from "../category/category";
-import {UsersCategories} from "../users-categories/usersCategories";
+import { Task } from "../task/task";
+import { Role } from "../role/role";
+import { Category } from "../category/category";
+import { UsersCategories } from "../users-categories/usersCategories";
+import * as bcrypt from "bcrypt";
 
-interface IUserAttributes {
+export interface IUserAttributes {
   id?: number;
   firstName?: string;
   lastName?: string;
@@ -17,7 +18,7 @@ interface IUserAttributes {
   updatedAt?: Date;
 }
 
-interface IUserInstance extends Sequelize.Instance<IUserAttributes> {
+export interface IUserInstance extends Sequelize.Instance<IUserAttributes> {
   dataValues: IUserAttributes;
 }
 
@@ -77,18 +78,17 @@ export const User = db.define<IUserInstance, IUserAttributes>("user", {
 },
 );
 
+// #TODO: should be moved to service
 // User.beforeCreate((user: IUserInstance, Options: object) => {
-//   // @todo implement bcrypt
-//   // if (user.changed("password")) {
-//     let salt;
-//     let hash;
-//     console.log("user.dataValues.password:");
-//     console.log(user.dataValues.password);
-//     salt = bcrypt.genSalt(10);
-//     hash = bcrypt.hash(user.dataValues.password, salt);
-
+//   bcrypt.hash(user.dataValues.password, 10, (err, hash) => {
 //     user.dataValues.password = hash;
-//   // }
+//   });
+// });
+
+// User.beforeUpdate((user: IUserInstance, Options: object) => {
+//   bcrypt.hash(user.dataValues.password, 10, (err, hash) => {
+//     user.dataValues.password = hash;
+//   });
 // });
 
 User.associate = (models) => {
