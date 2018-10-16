@@ -1,5 +1,6 @@
 import { User, IUserAttributes } from "../user";
 import * as jwt from "jsonwebtoken";
+import * as bcrypt from "bcrypt";
 
 class UserService {
 
@@ -34,6 +35,7 @@ class UserService {
     public async create(model) {
         if (model) {
             if (!model.id) {
+                model.password = this.bcryptPassword(model.password);
                 return User.create(model);
             }
             throw new Error("User already exists");
@@ -43,6 +45,7 @@ class UserService {
     // Put
     public async update(userId, model) {
         if (model && Number.isInteger(userId)) {
+            // #TODO: add bcrypt before update password;
             delete model[userId];
             const result = await User.update(model, { where: { id: userId } });
             return !!result[0];
@@ -60,7 +63,7 @@ class UserService {
         })) as IUserAttributes;
 
         if (UserExists) {
-            if (UserExists.password === password) {
+            if (this.isSamePassword(password, UserExists.password)) {
                 return UserExists;
             } else {
                 // wrong password try again
@@ -91,6 +94,19 @@ class UserService {
             // return false;
         }
     }
+
+    // before create bcrypt password
+    private bcryptPassword(password) {
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(password, salt);
+        return hash;
+    }
+
+    // compare password
+    private isSamePassword(password, hash) {
+        return bcrypt.compareSync(password, hash); // true
+    }
+
 }
 
 export default new UserService();
