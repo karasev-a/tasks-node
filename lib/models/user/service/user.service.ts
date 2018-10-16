@@ -68,10 +68,15 @@ class UserService {
             } else {
                 // wrong password try again
                 // or reset you password
-                return false;
+                const err = new Error("wrong password");
+                err.name = "401.1";
+                throw err;
             }
         } else {
             // doesn't exists
+            const err = new Error("user with this email doesn't exists");
+            err.name = "401";
+            throw err;
         }
     }
 
