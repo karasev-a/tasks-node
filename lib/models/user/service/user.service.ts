@@ -1,6 +1,7 @@
 import { User, IUserAttributes } from "../user";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
+import { TE } from "../../../tools/error";
 
 class UserService {
 
@@ -38,7 +39,7 @@ class UserService {
                 model.password = this.bcryptPassword(model.password);
                 return User.create(model);
             }
-            throw new Error("User already exists");
+            TE("User already exists", 401);
         }
     }
 
@@ -68,15 +69,11 @@ class UserService {
             } else {
                 // wrong password try again
                 // or reset you password
-                const err = new Error("wrong password");
-                err.name = "401.1";
-                throw err;
+                TE("wrong password");
             }
         } else {
             // doesn't exists
-            const err = new Error("user with this email doesn't exists");
-            err.name = "401";
-            throw err;
+            TE("user with this email doesn't exists");
         }
     }
 
@@ -94,14 +91,19 @@ class UserService {
     // check token
     public async isAuth(token) {
         try {
+            const tk = jwt.verify(token, "secret");
             return jwt.verify(token, "secret");
         } catch (err) {
-            // return false;
+            return false;
         }
     }
 
     // before create bcrypt password
     private bcryptPassword(password) {
+        const mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+        if (!mediumRegex.test(password)) {
+           TE("wrong password"); // #TODO: you can add more detail errors like too short, etc.
+        }
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(password, salt);
         return hash;

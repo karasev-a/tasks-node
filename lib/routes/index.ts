@@ -1,5 +1,4 @@
 import * as express from "express";
-import * as jwt from "jsonwebtoken";
 
 import roleRouter from "../models/role/routes/roleRouter";
 import taskRouter from "../models/task/routes/taskRouter";
