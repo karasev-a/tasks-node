@@ -13,13 +13,13 @@ class LoginController {
             } else {
                 res.status(401).send(`${err.message}`);
             }
-            return;
+            return Promise.reject();
         });
 
-        const token = await UserService.auth(user).catch( (err) => {
-            console.log(err);
+        const tokenValue = await UserService.auth(user).catch( (err) => {
+            // some error
         });
-        token ? res.status(201).send({ "token": token }) : res.sendStatus(404);
+        tokenValue ? res.status(201).send({ token: tokenValue }) : res.sendStatus(404);
     }
 
     //

@@ -55,8 +55,16 @@ class UserService {
 
     // check email and password
     public async checkCredentials(credentials) {
+        if (!credentials.email) {
+            TE("empty mail field");
+        }
+        if (!credentials.password) {
+            TE("empty password");
+        }
+
         const email = credentials.email;
         const password = credentials.password;
+
         const UserExists = (await User.findOne({
             where: {
                 email,
