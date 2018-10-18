@@ -1,7 +1,6 @@
 import UserService from "../models/user/service/user.service";
 import { NextFunction, Request, Response } from "express";
 // import { User } from "models/user/user";
-// import {TE} from "../tools/error";
 
 class LoginController {
     // Post
