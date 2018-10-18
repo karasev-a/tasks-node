@@ -1,6 +1,7 @@
 import { User, IUserAttributes } from "../user";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
+import { OrngError } from "../../../tools/error";
 
 class UserService {
 
@@ -38,7 +39,7 @@ class UserService {
                 model.password = this.bcryptPassword(model.password);
                 return User.create(model);
             }
-            throw new Error("User already exists");
+            throw new OrngError("User already exists", 401);
         }
     }
 
@@ -54,8 +55,16 @@ class UserService {
 
     // check email and password
     public async checkCredentials(credentials) {
+        if (!credentials.email) {
+            throw new OrngError("empty mail field", 400);
+        }
+        if (!credentials.password) {
+            throw new OrngError("empty password", 401);
+        }
+
         const email = credentials.email;
         const password = credentials.password;
+
         const UserExists = (await User.findOne({
             where: {
                 email,
@@ -68,15 +77,11 @@ class UserService {
             } else {
                 // wrong password try again
                 // or reset you password
-                const err = new Error("wrong password");
-                err.name = "401.1";
-                throw err;
+                throw new OrngError("wrong password", 401);
             }
         } else {
             // doesn't exists
-            const err = new Error("user with this email doesn't exists");
-            err.name = "401";
-            throw err;
+            throw new OrngError("user with this email doesn't exists", 400);
         }
     }
 
@@ -93,15 +98,30 @@ class UserService {
 
     // check token
     public async isAuth(token) {
-        try {
-            return jwt.verify(token, "secret");
-        } catch (err) {
-            // return false;
-        }
+        jwt.verify(token, "secret", (err, decoded) => {
+            if (err) {
+                return false;
+                // return res.json({
+                //     success: false,
+                //     message: 'Token is not valid'
+                } else {
+                return true;
+            }
+        });
+                // try {
+                //     const tk = jwt.verify(token, "secret");
+                //     return jwt.verify(token, "secret");
+                // } catch (err) {
+                //     return false;
+                // }
     }
 
     // before create bcrypt password
     private bcryptPassword(password) {
+        const mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+        if (!mediumRegex.test(password)) {
+            throw new OrngError("wrong password"); // #TODO: you can add more detail errors like too short, etc.
+        }
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(password, salt);
         return hash;
