@@ -15,10 +15,12 @@ class LoginController {
             }
             return Promise.reject();
         });
+        // const user = await UserService.checkCredentials(credentials);
 
         const tokenValue = await UserService.auth(user).catch( (err) => {
             // some error
         });
+
         tokenValue ? res.status(201).send({ token: tokenValue }) : res.sendStatus(404);
     }
 
@@ -34,6 +36,7 @@ class LoginController {
         } else {
             res.status(401).send({ auth: true, message: "wrong token." });
         }
+        next();
     }
 }
 

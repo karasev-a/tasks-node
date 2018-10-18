@@ -98,19 +98,29 @@ class UserService {
 
     // check token
     public async isAuth(token) {
-        try {
-            const tk = jwt.verify(token, "secret");
-            return jwt.verify(token, "secret");
-        } catch (err) {
-            return false;
-        }
+        jwt.verify(token, "secret", (err, decoded) => {
+            if (err) {
+                return false;
+                // return res.json({
+                //     success: false,
+                //     message: 'Token is not valid'
+                } else {
+                return true;
+            }
+        });
+                // try {
+                //     const tk = jwt.verify(token, "secret");
+                //     return jwt.verify(token, "secret");
+                // } catch (err) {
+                //     return false;
+                // }
     }
 
     // before create bcrypt password
     private bcryptPassword(password) {
         const mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
         if (!mediumRegex.test(password)) {
-           TE("wrong password"); // #TODO: you can add more detail errors like too short, etc.
+            TE("wrong password"); // #TODO: you can add more detail errors like too short, etc.
         }
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(password, salt);
