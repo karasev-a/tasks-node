@@ -10,13 +10,13 @@ import { isLogin } from "../middleware/isLogin";
 import loginContorller from "../controllers/loginController";
 
 const router = express.Router();
-
+router.use("/users", userRouter);
 router.use("/", loginRouter);
 
 // router.use(loginContorller.islogin);
 
 router.use("/tasks", isLogin, taskRouter);
-router.use("/users", userRouter);
+router.use("/users", isLogin, userRouter);
 router.use("/categories", categoryRouter);
 router.use("/roles", roleRouter);
 

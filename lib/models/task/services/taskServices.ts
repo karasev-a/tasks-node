@@ -1,4 +1,5 @@
-import { Task, ITaskAttributes } from "../task";
+import { Task, ITaskAttributes, Statuses } from "../task";
+import { Op } from "sequelize";
 
 class TaskService {
 
@@ -40,6 +41,31 @@ class TaskService {
         if (task) {
             return Task.create(task);
         }
+    }
+
+    public async getOpenTasks() {
+        return Task.findAll({
+            where: {
+                status: Statuses.Open,
+            },
+        });
+    }
+
+    public async getTasksByCat(catId) {
+        return Task.findAll({
+            where: {
+                categoryId: catId,
+            },
+        });
+    }
+
+    public async increasSubPoeple(taskId) {
+        const task =  await this.getOneTask(taskId);
+        if ( task ) {
+            task.dataValues.subscrebedPeople ++;
+        }
+        const result = await this.updateTask(taskId, task.dataValues);
+        return  result;
     }
 
 }

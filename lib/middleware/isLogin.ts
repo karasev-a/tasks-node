@@ -8,9 +8,9 @@ export const isLogin = (req: Request, res: Response, next: NextFunction) => {
     }
 
     if (UserService.isAuth(token)) {
-        res.status(200).send({ auth: true, message: "authenticate token." });
+        // res.status(200).send({ auth: true, message: "authenticate token." });
+        next();
     } else {
         res.status(401).send({ auth: true, message: "wrong token." });
     }
-    next();
 };

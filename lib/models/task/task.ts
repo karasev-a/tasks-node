@@ -22,6 +22,14 @@ export interface ITaskInstance extends Sequelize.Instance<ITaskAttributes> {
   dataValues: ITaskAttributes;
 }
 
+export enum Statuses {
+  OnReview = 1,
+  Open = 2,
+  Pending = 3,
+  Done = 4,
+  Decline = 5,
+}
+
 export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
   // id: {
   //   allowNull: false,
@@ -53,9 +61,9 @@ export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
     type: Sequelize.DATE,
   },
   status: {
-    type: Sequelize.ENUM,
-    values: ["OnReview", "Open", "Pending", "Done", "Decline"],
-    defaultValue: "OnReview",
+    type: Sequelize.INTEGER,
+    // values: ["OnReview", "Open", "Pending", "Done", "Decline"],
+    defaultValue: Statuses.OnReview,
   },
   subscrebedPeople: {
     type: Sequelize.INTEGER,

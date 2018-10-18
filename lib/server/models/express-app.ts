@@ -4,7 +4,7 @@ import { NextFunction, Request, Response, Router } from "express";
 import * as bodyParser from "body-parser";
 import routes from "../../routes/index";
 import {UsersCategories} from "../../models/users-categories/usersCategories";
-// const us = UsersCategories;
+const us = UsersCategories;
 
 class App {
 

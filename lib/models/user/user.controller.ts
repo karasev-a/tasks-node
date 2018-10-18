@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 // import { apiErrorHandler } from '../handlers/errorHandler';
 import UserService from "./service/user.service";
-import { TE } from "../../tools/error";
 // import loggers from '../../tools/loggers';
 
 class UserController {

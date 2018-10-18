@@ -38,6 +38,26 @@ class TaskController {
         global.logger.info(`Update task: ${task}`);
         res.status(200).send(result);
     }
+
+    public async getOpenTasks(req, res) {
+        const result = await taskService.getOpenTasks();
+        res.status(200).send(result);
+        global.logger.info(`Get open tasks`);
+    }
+
+    public async getTasksByCat(req, res) {
+        const catId = parseInt(req.params.catId, 10);
+        const result = await taskService.getTasksByCat(catId);
+        res.status(200).send(result);
+        global.logger.info(`Get tasks by category`);
+    }
+
+    public async increaseSubPeople(req, res) {
+        const taslId = parseInt(req.params.taskId, 10);
+        const result = await taskService.increasSubPoeple(taslId);
+        res.status(200).send(result);
+        global.logger.info(`Get tasks by category`);
+    }
 }
 
 export default new TaskController();
