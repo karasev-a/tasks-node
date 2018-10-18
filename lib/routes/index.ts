@@ -6,15 +6,16 @@ import taskRouter from "../models/task/routes/taskRouter";
 import categoryRouter from "../models/category/routes/categoryRouter";
 import userRouter from "../models/user/routes/userRouter";
 import loginRouter from "./loginRouter";
+import { isLogin } from "../middleware/isLogin";
 import loginContorller from "../controllers/loginController";
 
 const router = express.Router();
 
 router.use("/", loginRouter);
 
-router.use(loginContorller.islogin);
+// router.use(loginContorller.islogin);
 
-router.use("/tasks", taskRouter);
+router.use("/tasks", isLogin, taskRouter);
 router.use("/users", userRouter);
 router.use("/categories", categoryRouter);
 router.use("/roles", roleRouter);

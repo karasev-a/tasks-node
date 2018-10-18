@@ -25,20 +25,6 @@ class LoginController {
         }
     }
 
-    //
-    public async islogin(req: Request, res: Response, next: NextFunction) {
-        const token = req.headers["x-access-token"]; // #TODO: need parce
-        if (!token) {
-            return res.status(401).send({ auth: false, message: "No token provided." });
-        }
-
-        if (UserService.isAuth(token)) {
-            res.status(200).send({ auth: true, message: "authenticate token." });
-        } else {
-            res.status(401).send({ auth: true, message: "wrong token." });
-        }
-        next();
-    }
 }
 
 export default new LoginController();
