@@ -7,21 +7,23 @@ class LoginController {
     // Post
     public async login(req: Request, res: Response, next: NextFunction) {
         const credentials = req.body;
-        const user = await UserService.checkCredentials(credentials).catch( (err) => {
+        let user;
+        try {
+            user = await UserService.checkCredentials(credentials);
+        } catch (err) {
             if (err.original) {
-                res.status(401).send(`${err.message}: ${err.original.message}`);
+                res.status(err.status).send(`${err.message}: ${err.original.message}`);
             } else {
-                res.status(401).send(`${err.message}`);
+                res.status(err.status).send(`${err.message}`);
             }
-            return Promise.reject();
-        });
-        // const user = await UserService.checkCredentials(credentials);
-
-        const tokenValue = await UserService.auth(user).catch( (err) => {
-            // some error
-        });
-
-        tokenValue ? res.status(201).send({ token: tokenValue }) : res.sendStatus(404);
+        }
+        let tokenValue;
+        if (user) {
+            tokenValue = await UserService.auth(user).catch((err) => {
+                // some error
+            });
+            tokenValue ? res.status(201).send({ token: tokenValue }) : res.sendStatus(404);
+        }
     }
 
     //

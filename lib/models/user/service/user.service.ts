@@ -56,10 +56,10 @@ class UserService {
     // check email and password
     public async checkCredentials(credentials) {
         if (!credentials.email) {
-            TE("empty mail field");
+            TE("empty mail field", 400);
         }
         if (!credentials.password) {
-            TE("empty password");
+            TE("empty password", 401);
         }
 
         const email = credentials.email;
@@ -77,11 +77,11 @@ class UserService {
             } else {
                 // wrong password try again
                 // or reset you password
-                TE("wrong password");
+                TE("wrong password", 401);
             }
         } else {
             // doesn't exists
-            TE("user with this email doesn't exists");
+            TE("user with this email doesn't exists", 400);
         }
     }
 
