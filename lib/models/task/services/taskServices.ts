@@ -1,5 +1,6 @@
 import { Task, ITaskAttributes, Statuses } from "../task";
 import { Op } from "sequelize";
+import loggers from "tools/loggers";
 
 class TaskService {
 
@@ -44,6 +45,7 @@ class TaskService {
     }
 
     public async getOpenTasks() {
+        throw new Error("eeeeeee");
         return Task.findAll({
             where: {
                 status: Statuses.Open,

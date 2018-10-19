@@ -7,6 +7,14 @@ import * as modelSchema from "../../../middleware/validation/modelSchema";
 
 const router: Router = Router();
 
+const handleErrorAsync = (func) => async (req, res, next) => {
+    try {
+      await func(req, res, next);
+    } catch (error) {
+      next(error);
+    }
+  };
+
 router.get("/:taskId/inc", taskController.increaseSubPeople);
 router.get("/:taskId",  taskController.getOneTask);
 router.delete("/:taskId", taskController.deleteTask);
@@ -14,6 +22,6 @@ router.put("/:taskId", CheckParamsMiddleware.validateParamsJoi(modelSchema.taskS
 
 router.get("/categories/:catId", taskController.getTasksByCat);
 router.post("/", taskController.createNewTask);
-router.get("/", taskController.getOpenTasks);
+router.get("/", handleErrorAsync(taskController.getOpenTasks));
 
 export default router;

@@ -8,10 +8,11 @@ class TaskController {
     }
 
     public async getOneTask(req, res) {
-        const userId = parseInt(req.params.taskId, 10);
-        const task = await taskService.getOneTask(userId);
+        const taskId = parseInt(req.params.taskId, 10);
+        const task = await taskService.getOneTask(taskId);
         if (task) {
             res.status(200).send(task);
+            global.logger.info("Get task by Id");
         } else {
             res.sendStatus(404);
         }
@@ -40,9 +41,13 @@ class TaskController {
     }
 
     public async getOpenTasks(req, res) {
-        const result = await taskService.getOpenTasks();
-        res.status(200).send(result);
-        global.logger.info(`Get open tasks`);
+        try {
+            const result = await taskService.getOpenTasks();
+            res.status(200).send(result);
+            global.logger.info(`Get open tasks`);
+        } catch (error) {
+            global.logger.error(error);
+        }
     }
 
     public async getTasksByCat(req, res) {
