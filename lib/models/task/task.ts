@@ -47,9 +47,8 @@ export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
   },
   people: {
     type: Sequelize.INTEGER,
-    // validate: {
-    //   min: 1, max: 5,
-    // },
+    validate: {
+    },
   },
   price: {
     type: Sequelize.FLOAT,
@@ -59,6 +58,15 @@ export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
   },
   date: {
     type: Sequelize.DATE,
+    validate: {
+      isDate: true,
+      equalOrMoreToday(date) {
+        const curDate = new Date();
+        if (date < curDate ) {
+          throw new Error("date must be current date or more");
+        }
+      },
+    },
   },
   status: {
     type: Sequelize.INTEGER,
@@ -68,6 +76,14 @@ export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
   subscrebedPeople: {
     type: Sequelize.INTEGER,
     defaultValue: 0,
+    validate: {
+      min: 0,
+      lesOrEquelPeople(subscrebedPeople) {
+        if (parseInt(this.people, 10) < parseInt(subscrebedPeople, 10)) {
+          throw new Error("subscribed poeple must be less then needed people");
+        }
+      },
+    },
   },
   userId: {
     type: Sequelize.INTEGER,

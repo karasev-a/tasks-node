@@ -4,10 +4,10 @@ class TaskController {
     public async getAllTasks(req, res) {
         const result = await taskService.getAllTasks();
         res.status(200).send(result);
-        global.logger.info(result);
+        global.logger.info(JSON.stringify(result));
     }
 
-    public async getOneTask(req, res, next) {
+    public async getOneTask(req, res) {
         const userId = parseInt(req.params.taskId, 10);
         const task = await taskService.getOneTask(userId);
         if (task) {
@@ -26,7 +26,7 @@ class TaskController {
     public async createNewTask(req, res) {
         const task = req.body;
         const result = await taskService.createTask(task);
-        global.logger.info(`Create task: ${task}`);
+        global.logger.info(`Create task: ${JSON.stringify(task)}`);
         res.status(201).send(result);
 
     }
@@ -35,7 +35,7 @@ class TaskController {
         const taskId = parseInt(req.params.taskId, 10);
         const task = req.body;
         const result = await taskService.updateTask(taskId, task);
-        global.logger.info(`Update task: ${task}`);
+        global.logger.info(`Update task: ${JSON.stringify(task)}`);
         res.status(200).send(result);
     }
 
