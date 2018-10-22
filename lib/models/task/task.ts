@@ -2,6 +2,7 @@ import * as Sequelize from "sequelize";
 import db from "../../db/models/db";
 import { Category } from "../category/category";
 import { User } from "../user/user";
+import { number } from "joi";
 
 export interface ITaskAttributes {
   id?: string;
@@ -10,7 +11,6 @@ export interface ITaskAttributes {
   price?: number;
   description?: string;
   date?: Date;
-  subscrebedPeople?: number;
   status?: string;
   userId?: number;
   categoryId?: number;
@@ -22,13 +22,15 @@ export interface ITaskInstance extends Sequelize.Instance<ITaskAttributes> {
   dataValues: ITaskAttributes;
 }
 
+export enum Statuses {
+  OnReview = 1,
+  Open = 2,
+  Pending = 3,
+  Done = 4,
+  Decline = 5,
+}
+
 export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
-  // id: {
-  //   allowNull: false,
-  //   autoIncrement: true,
-  //   primaryKey: true,
-  //   type: Sequelize.INTEGER,
-  // },
   title: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -39,9 +41,8 @@ export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
   },
   people: {
     type: Sequelize.INTEGER,
-    // validate: {
-    //   min: 1, max: 5,
-    // },
+    validate: {
+    },
   },
   price: {
     type: Sequelize.FLOAT,
@@ -51,15 +52,19 @@ export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
   },
   date: {
     type: Sequelize.DATE,
+    validate: {
+      isDate: true,
+      equalOrMoreToday(date) {
+        const curDate = new Date();
+        if (date < curDate ) {
+          throw new Error("date must be current date or more");
+        }
+      },
+    },
   },
   status: {
-    type: Sequelize.ENUM,
-    values: ["OnReview", "Open", "Pending", "Done", "Decline"],
-    defaultValue: "OnReview",
-  },
-  subscrebedPeople: {
     type: Sequelize.INTEGER,
-    defaultValue: 0,
+    defaultValue: Statuses.OnReview,
   },
   userId: {
     type: Sequelize.INTEGER,
@@ -85,10 +90,12 @@ export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
     allowNull: false,
     type: Sequelize.DATE,
   },
+  subscribedPeople: {
+    type: Sequelize.INTEGER,
+  },
 }, {});
 Task.associate = () => {
-  // Task.belongsTo(Category);
   Task.belongsTo(Category, { foreignKey: "categoryId", targetKey: "id" });
   Task.belongsTo(User, { foreignKey: "userId", targetKey: "id" });
-  // Task.belongsToMany(models.User, { through: "UsersTasks", foreignKey: "taskId" });
+  Task.belongsToMany(User, { through: "UsersTasks", foreignKey: "taskId" });
 };

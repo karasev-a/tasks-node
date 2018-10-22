@@ -1,13 +1,30 @@
 import { Router } from "express";
+import * as joi from "joi";
 
 import taskController from "../taskController";
+import CheckParamsMiddleware from "../../../middleware/validation/check-params.middleware";
+import * as modelSchema from "../../../middleware/validation/modelSchema";
 
 const router: Router = Router();
 
-router.get("/:taskId", taskController.getOneTask);
-router.delete("/:taskId", taskController.deleteTask);
-router.put("/taskId", taskController.updateTask);
-router.post("/", taskController.createNewTask);
-router.get("/", taskController.getAllTasks);
+const handleErrorAsync = (func) => async (req, res, next) => {
+    try {
+      await func(req, res, next);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+router.post("/:taskId/subscription/:userId", handleErrorAsync(taskController.subscribeToTask));
+router.get("/:taskId",  handleErrorAsync(taskController.getOneTask));
+router.delete("/:taskId", handleErrorAsync(taskController.deleteTask));
+router.put("/:taskId",
+  CheckParamsMiddleware.validateParamsJoi(modelSchema.taskSchema),
+  handleErrorAsync(taskController.updateTask));
+router.get("/categories/:categoryId", handleErrorAsync(taskController.getTasksByCategory));
+router.post("/",
+  CheckParamsMiddleware.validateParamsJoi(modelSchema.taskSchema),
+  handleErrorAsync(taskController.createNewTask));
+router.get("/", handleErrorAsync(taskController.getOpenTasks));
 
 export default router;
