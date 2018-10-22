@@ -15,13 +15,13 @@ const handleErrorAsync = (func) => async (req, res, next) => {
     }
   };
 
-router.get("/:taskId/inc", handleErrorAsync(taskController.increaseSubPeople));
+router.post("/:taskId/subscription/:userId", handleErrorAsync(taskController.subscribeToTask));
 router.get("/:taskId",  handleErrorAsync(taskController.getOneTask));
 router.delete("/:taskId", handleErrorAsync(taskController.deleteTask));
 router.put("/:taskId",
   CheckParamsMiddleware.validateParamsJoi(modelSchema.taskSchema),
   handleErrorAsync(taskController.updateTask));
-router.get("/categories/:catId", handleErrorAsync(taskController.getTasksByCat));
+router.get("/categories/:categoryId", handleErrorAsync(taskController.getTasksByCategory));
 router.post("/",
   CheckParamsMiddleware.validateParamsJoi(modelSchema.taskSchema),
   handleErrorAsync(taskController.createNewTask));

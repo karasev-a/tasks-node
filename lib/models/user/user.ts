@@ -4,6 +4,7 @@ import { Task } from "../task/task";
 import { Role } from "../role/role";
 import { Category } from "../category/category";
 import { UsersCategories } from "../users-categories/usersCategories";
+import { UsersTasks } from "../users-tasks/usersTasks";
 import * as bcrypt from "bcrypt";
 
 export interface IUserAttributes {
@@ -82,4 +83,5 @@ User.associate = (models) => {
   User.hasMany(Task, { foreignKey: "userId", sourceKey: "id" });
   User.belongsTo(Role, { foreignKey: "roleId", targetKey: "id" });
   User.belongsToMany(Category, { through: "UsersCategories", foreignKey: "userId" });
+  User.belongsToMany(Task, { through: "UsersTasks", foreignKey: "userId" });
 };

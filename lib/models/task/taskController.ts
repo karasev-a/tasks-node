@@ -50,18 +50,25 @@ class TaskController {
         }
     }
 
-    public async getTasksByCat(req, res) {
-        const catId = parseInt(req.params.catId, 10);
-        const result = await taskService.getTasksByCat(catId);
+    public async getTasksByCategory(req, res) {
+        const categoryId = parseInt(req.params.categoryId, 10);
+        const result = await taskService.getTasksByCategory(categoryId);
         res.status(200).send(result);
         global.logger.info(`Get tasks by category`);
     }
 
-    public async increaseSubPeople(req, res) {
-        const taslId = parseInt(req.params.taskId, 10);
-        const result = await taskService.increasSubPoeple(taslId);
-        res.status(200).send(result);
-        global.logger.info(`Get tasks by category`);
+    public async subscribeToTask(req, res) {
+        const taskId = parseInt(req.params.taskId, 10);
+        const userId = parseInt(req.params.userId, 10);
+        const result = await taskService.subscribeToTask(taskId, userId);
+        if (result) {
+            res.status(200).send(result);
+            global.logger.info(`User subscribed to task`);
+        } else {
+            res.status(400).end();
+            global.logger.error({message: `User do not subscribed to task`});
+        }
+
     }
 }
 

@@ -4,8 +4,6 @@ import app from "./lib/server/models/express-app";
 import DBService from "./lib/db/services/db-service";
 
 import loggers from "./lib/tools/loggers";
-loggers.initLoggers();
-loggers.initGlobalLogger();
 
 const initApp = async () => {
   try {

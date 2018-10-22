@@ -42,5 +42,3 @@ Category.associate = () => {
    Category.hasMany(Task, { foreignKey: "categoryId", sourceKey: "id" });
    Category.belongsToMany(User, { through: "UsersCategories", foreignKey: "categoryId" });
 };
-
-// Category.hasMany(Task, { foreignKey: "taskId", targetKey: "id" });

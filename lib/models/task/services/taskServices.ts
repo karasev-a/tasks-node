@@ -1,6 +1,8 @@
 import { Task, ITaskAttributes, Statuses } from "../task";
 import { Op } from "sequelize";
 import loggers from "tools/loggers";
+import { UsersTasks } from "../../users-tasks/usersTasks";
+import { User } from "models/user/user";
 
 class TaskService {
 
@@ -17,13 +19,13 @@ class TaskService {
     }
 
     public async deleteTaskById(taskId: number) {
-        return  Number.isInteger(taskId)
-        ? Task.destroy({
-            where: {
-                id: taskId,
-            },
-        })
-        : null;
+        return Number.isInteger(taskId)
+            ? Task.destroy({
+                where: {
+                    id: taskId,
+                },
+            })
+            : null;
     }
 
     public async updateTask(taskId: number, task: ITaskAttributes) {
@@ -52,7 +54,7 @@ class TaskService {
         });
     }
 
-    public async getTasksByCat(catId) {
+    public async getTasksByCategory(catId) {
         return Task.findAll({
             where: {
                 categoryId: catId,
@@ -60,13 +62,29 @@ class TaskService {
         });
     }
 
-    public async increasSubPoeple(taskId) {
-        const task =  await this.getOneTask(taskId);
-        if ( task ) {
-            task.dataValues.subscrebedPeople ++;
+    public async subscribeToTask(taskIdParam, userIdParam) {
+        const subscribedUser = await UsersTasks.findOne({
+            where: {
+                userId: userIdParam,
+            },
+        });
+
+        if (!subscribedUser) {
+            const task = await Task.findById(taskIdParam);
+            const tasksInUT = await UsersTasks.findAndCountAll({
+                where: {
+                    taskId: taskIdParam,
+                },
+            });
+
+            if (tasksInUT.count < task.dataValues.people) {
+                return await UsersTasks.create({
+                    userId: userIdParam,
+                    taskId: taskIdParam,
+                });
+            }
         }
-        const result = await this.updateTask(taskId, task.dataValues);
-        return  result;
+
     }
 
 }
