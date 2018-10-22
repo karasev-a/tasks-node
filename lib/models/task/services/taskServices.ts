@@ -45,7 +45,6 @@ class TaskService {
     }
 
     public async getOpenTasks() {
-        throw new Error("eeeeeee");
         return Task.findAll({
             where: {
                 status: Statuses.Open,
