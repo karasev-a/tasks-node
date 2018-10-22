@@ -1,5 +1,4 @@
 import * as winston from "winston";
-
 import * as path from "path";
 
 // declare global { let logger: any; }
@@ -42,7 +41,7 @@ class LoggerService {
       ),
     });
 
-    const info = winston.createLogger({
+    const loggerInfo = winston.createLogger({
       level: "info",
       transports: [
         cosoleLogTransport,
@@ -76,48 +75,9 @@ class LoggerService {
       ],
     });
 
-
-
-    // const fileLoggerInfo = new(winston.transports.File)({
-    //   filename: path.join("logs", "common", "logInfo.log"),
-    //   level: "info",
-    //   handleExceptions: false,
-    //   maxsize: fileSize,
-    //   format: winston.format.combine(
-    //     winston.format.timestamp(),
-    //     myFormat,
-    //   ),
-    // });
-
-    // const fileLoggerError = new(winston.transports.File)({
-    //   filename: path.join("logs", "common", "logError.log"),
-    //   level: "error",
-    //   handleExceptions: true,
-    //   maxsize: fileSize,
-    //   format: winston.format.combine(
-    //     winston.format.timestamp(),
-    //     myFormat,
-    //   ),
-    // });
-
-    // const result = winston.createLogger({
-    //   transports: [
-    //     new(winston.transports.Console)({
-    //       format: winston.format.combine(
-    //         winston.format.colorize(),
-    //         winston.format.timestamp(),
-    //        myFormat,
-    //       ),
-    //     }),
-    //     fileLoggerInfo,
-    //     fileLoggerError,
-    //   ],
-    //   exceptionHandlers: [fileLoggerError],
-    // });
-    // return result;
     const result = {
       info: (msg) => {
-        info.info(msg);
+        loggerInfo.info(msg);
       },
       error: (msg) => {
         err.error(msg);
