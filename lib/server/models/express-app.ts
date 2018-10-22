@@ -3,13 +3,9 @@ import * as express from "express";
 import { NextFunction, Request, Response, Router } from "express";
 import * as bodyParser from "body-parser";
 import routes from "../../routes/index";
-import { UsersCategories } from "../../models/users-categories/usersCategories";
-import { UsersTasks } from "../../models/users-tasks/usersTasks";
 import * as morgan from "morgan";
 import loggers from "../../tools/loggers";
 
-const ut = UsersTasks;
-const us = UsersCategories;
 loggers.initLoggers();
 loggers.initGlobalLogger();
 

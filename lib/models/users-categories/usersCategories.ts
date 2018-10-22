@@ -35,7 +35,6 @@ export const UsersCategories = db.define<IUsersCategoriesInstance, IUsersCategor
   },
 }, {});
 UsersCategories.associate = () => {
-  // Role.hasMany(User, { foreignKey: "roleId", sourceKey: "id" });
   UsersCategories.belongsTo(User, {foreignKey: "userId" });
   UsersCategories.belongsTo(Category, { foreignKey: "categoryId" });
 };
