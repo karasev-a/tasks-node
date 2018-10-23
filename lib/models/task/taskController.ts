@@ -2,7 +2,7 @@ import taskService from "./services/taskServices";
 import loggers from "../../tools/loggers";
 class TaskController {
     public async getAllTasks(req, res) {
-        const result = await taskService.getAllTasks();
+        const result = await taskService.getAllTasks(req);
         res.status(200).send(result);
         global.logger.info(JSON.stringify(result));
     }
