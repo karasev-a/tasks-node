@@ -2,7 +2,6 @@ import * as Sequelize from "sequelize";
 import db from "../../db/models/db";
 import { Category } from "../category/category";
 import { User } from "../user/user";
-import { number } from "joi";
 
 export interface ITaskAttributes {
   id?: string;
@@ -89,9 +88,6 @@ export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
   updatedAt: {
     allowNull: false,
     type: Sequelize.DATE,
-  },
-  subscribedPeople: {
-    type: Sequelize.INTEGER,
   },
 }, {});
 Task.associate = () => {

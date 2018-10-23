@@ -3,8 +3,6 @@ import db from "../../db/models/db";
 import { Task } from "../task/task";
 import { Role } from "../role/role";
 import { Category } from "../category/category";
-import { UsersCategories } from "../users-categories/usersCategories";
-import { UsersTasks } from "../users-tasks/usersTasks";
 import * as bcrypt from "bcrypt";
 
 export interface IUserAttributes {
@@ -23,7 +21,7 @@ export interface IUserInstance extends Sequelize.Instance<IUserAttributes> {
   dataValues: IUserAttributes;
 }
 
-export const User = db.define<IUserInstance, IUserAttributes>("user", {
+export const User = db.define<IUserInstance, IUserAttributes>("User", {
   firstName: {
     type: Sequelize.STRING,
     allowNull: false,
@@ -82,6 +80,6 @@ export const User = db.define<IUserInstance, IUserAttributes>("user", {
 User.associate = (models) => {
   User.hasMany(Task, { foreignKey: "userId", sourceKey: "id" });
   User.belongsTo(Role, { foreignKey: "roleId", targetKey: "id" });
-  User.belongsToMany(Category, { through: "UsersCategories", foreignKey: "userId" });
   User.belongsToMany(Task, { through: "UsersTasks", foreignKey: "userId" });
+  User.belongsToMany(Category, { through: "UsersCategories", foreignKey: "userId" });
 };

@@ -10,30 +10,30 @@ class TaskService {
         return Task.findAll();
     }
 
-    public async getOneTask(taskId: number) {
+    public async getOneTask(id: number) {
         return Task.findOne({
             where: {
-                id: taskId,
+                id,
             },
         });
     }
 
-    public async deleteTaskById(taskId: number) {
-        return Number.isInteger(taskId)
+    public async deleteTaskById(id) {
+        return Number.isInteger(id)
             ? Task.destroy({
                 where: {
-                    id: taskId,
+                    id,
                 },
             })
             : null;
     }
 
-    public async updateTask(taskId: number, task: ITaskAttributes) {
-        if (task && Number.isInteger(taskId)) {
+    public async updateTask(id: number, task: ITaskAttributes) {
+        if (task && Number.isInteger(id)) {
             delete task.id;
             const result = await Task.update(task, {
                 where: {
-                    id: taskId,
+                    id,
                 },
             });
             return result;
@@ -54,33 +54,34 @@ class TaskService {
         });
     }
 
-    public async getTasksByCategory(catId) {
+    public async getTasksByCategory(categoryId) {
         return Task.findAll({
             where: {
-                categoryId: catId,
+                categoryId,
             },
         });
     }
 
-    public async subscribeToTask(taskIdParam, userIdParam) {
+    public async subscribeToTask(taskId, userId) {
         const subscribedUser = await UsersTasks.findOne({
             where: {
-                userId: userIdParam,
+                userId,
+                taskId,
             },
         });
 
         if (!subscribedUser) {
-            const task = await Task.findById(taskIdParam);
+            const task = await Task.findById(taskId);
             const tasksInUT = await UsersTasks.findAndCountAll({
                 where: {
-                    taskId: taskIdParam,
+                    taskId,
                 },
             });
 
             if (tasksInUT.count < task.dataValues.people) {
                 return await UsersTasks.create({
-                    userId: userIdParam,
-                    taskId: taskIdParam,
+                    userId,
+                    taskId,
                 });
             }
         }

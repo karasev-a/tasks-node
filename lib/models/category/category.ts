@@ -2,7 +2,6 @@ import * as Sequelize from "sequelize";
 import db from "../../db/models/db";
 import { Task } from "../task/task";
 import {User} from "../user/user";
-import {UsersCategories} from "../users-categories/usersCategories";
 
 export interface ICategoryAttributes {
   id?: string;
