@@ -1,9 +1,10 @@
 import { Task, ITaskAttributes, Statuses, ITaskInstance } from "../task";
-import { Op } from "sequelize";
+import * as sequelize from "sequelize";
 import loggers from "tools/loggers";
 import { UsersTasks } from "../../users-tasks/usersTasks";
-import { User } from "models/user/user";
+import { User } from "../../user/user";
 import { Result } from "range-parser";
+import { Category } from "../../category/category";
 
 class TaskService {
 
@@ -15,21 +16,54 @@ class TaskService {
                 where: { ...task },
                 limit: parseInt(otherParams.limit, 10),
                 offset: parseInt(otherParams.offset, 10),
+                // attributes: {
+                //     include: [[sequelize.fn("COUNT", sequelize.col("UsersTasks.userId")), "numberSubscribedPeople"]]
+                // },
+                // include: [{
+                //     model: UsersTasks, attributes: [],
+                // }],
+                // include: [{
+                //     model: UsersTasks,
+                //     attributes: {
+                //         include: [[sequelize.fn("COUNT", sequelize.col("taskId")), "numberSubscribedPeople"]],
+                //     },
+                // }],
+
+                // include: [{
+                //     model: UsersTasks,
+                    // attributes: {
+                    //     include: [[sequelize.fn("COUNT", sequelize.col("userId")), "numberSubscribedPeople"]]
+                    // },
+                // }],
+                include: [{
+                    model: Category,
+                    
+                }],
+
+
             });
         } else {
             tasks = await Task.findAll({
-                where: { ...task },
+                // where: { ...task },
+                include: [{
+                    model: Category,
+                    
+                }],
             });
+            
         }
         return tasks;
     }
 
     public async getOneTask(id: number) {
-        return Task.findOne({
+        let task = Task.findOne({
             where: {
                 id,
             },
-        });
+        }) as ITaskAttributes;
+        console.log(Task.build(task));
+        
+        return task;
     }
 
     public async deleteTaskById(id) {
