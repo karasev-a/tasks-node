@@ -1,13 +1,27 @@
-import { Task, ITaskAttributes, Statuses } from "../task";
+import { Task, ITaskAttributes, Statuses, ITaskInstance } from "../task";
 import { Op } from "sequelize";
 import loggers from "tools/loggers";
 import { UsersTasks } from "../../users-tasks/usersTasks";
 import { User } from "models/user/user";
+import { Result } from "range-parser";
 
 class TaskService {
 
-    public async getAllTasks() {
-        return Task.findAll();
+    public async getAllTasks(task, otherParams) {
+
+        let tasks: ITaskInstance[];
+        if (otherParams.offset && otherParams.limit) {
+            tasks = await Task.findAll({
+                where: { ...task },
+                limit: parseInt(otherParams.limit, 10),
+                offset: parseInt(otherParams.offset, 10),
+            });
+        } else {
+            tasks = await Task.findAll({
+                where: { ...task },
+            });
+        }
+        return tasks;
     }
 
     public async getOneTask(id: number) {
@@ -86,6 +100,26 @@ class TaskService {
             }
         }
 
+    }
+
+    public getTaskAndParamsFromGetQuery(queryObj) {
+        let result;
+        let task: ITaskAttributes;
+        let otherParams = {};
+        if (queryObj.limit && queryObj.offset) {
+            otherParams = {
+                limit: queryObj.limit,
+                offset: queryObj.offset,
+            };
+            delete queryObj.limit;
+            delete queryObj.offset;
+        }
+        task = queryObj;
+        result = {
+            task,
+            otherParams,
+        };
+        return result;
     }
 
 }

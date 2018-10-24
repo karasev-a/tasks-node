@@ -97,28 +97,24 @@ class UserService {
     }
 
     // check token
-    public async isAuth(token) {
+    public isAuth(token) {
+        let result;
         jwt.verify(token, "secret", (err, decoded) => {
-            if (err) {
-                return false;
-                // return res.json({
-                //     success: false,
-                //     message: 'Token is not valid'
-                } else {
-                return true;
-            }
+            err ? result = false : result = true;
         });
-                // try {
-                //     const tk = jwt.verify(token, "secret");
-                //     return jwt.verify(token, "secret");
-                // } catch (err) {
-                //     return false;
-                // }
+        return result;
+        // try {
+        //     const tk = jwt.verify(token, "secret");
+        //     return jwt.verify(token, "secret");
+        // } catch (err) {
+        //     return false;
+        // }
     }
 
     // before create bcrypt password
     private bcryptPassword(password) {
-        const mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+        const mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|"
+            + "((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
         if (!mediumRegex.test(password)) {
             throw new OrngError("wrong password"); // #TODO: you can add more detail errors like too short, etc.
         }

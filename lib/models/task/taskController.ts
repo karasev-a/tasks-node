@@ -1,8 +1,12 @@
 import taskService from "./services/taskServices";
 import loggers from "../../tools/loggers";
+import { ITaskAttributes } from "./task";
 class TaskController {
     public async getAllTasks(req, res) {
-        const result = await taskService.getAllTasks();
+        const paramsOfGet = taskService.getTaskAndParamsFromGetQuery(req.query);
+        const task: ITaskAttributes = paramsOfGet.task;
+        const otherParams = paramsOfGet.otherParams;
+        const result = await taskService.getAllTasks(task, otherParams);
         res.status(200).send(result);
         global.logger.info(JSON.stringify(result));
     }

@@ -8,15 +8,15 @@ import * as modelSchema from "../../../middleware/validation/modelSchema";
 const router: Router = Router();
 
 const handleErrorAsync = (func) => async (req, res, next) => {
-    try {
-      await func(req, res, next);
-    } catch (error) {
-      next(error);
-    }
-  };
-
+  try {
+    await func(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+};
+router.get("/", handleErrorAsync(taskController.getAllTasks));
 router.post("/:taskId/subscription/:userId", handleErrorAsync(taskController.subscribeToTask));
-router.get("/:taskId",  handleErrorAsync(taskController.getOneTask));
+router.get("/:taskId", handleErrorAsync(taskController.getOneTask));
 router.delete("/:taskId", handleErrorAsync(taskController.deleteTask));
 router.put("/:taskId",
   CheckParamsMiddleware.validateParamsJoi(modelSchema.taskSchema),
@@ -25,6 +25,6 @@ router.get("/categories/:categoryId", handleErrorAsync(taskController.getTasksBy
 router.post("/",
   CheckParamsMiddleware.validateParamsJoi(modelSchema.taskSchema),
   handleErrorAsync(taskController.createNewTask));
-router.get("/", handleErrorAsync(taskController.getOpenTasks));
+
 
 export default router;
