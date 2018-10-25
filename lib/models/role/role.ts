@@ -1,6 +1,5 @@
 import * as Sequelize from "sequelize";
 import db from "../../db/models/db";
-import {User} from "../user/user";
 
 export interface IRoleAttributes {
   id?: string;
@@ -31,6 +30,3 @@ export const Role = db.define<IRoleInstance, IRoleAttributes>("Role", {
     type: Sequelize.DATE,
   },
 }, {});
-Role.associate = () => {
-  // Role.hasMany(User, { foreignKey: "roleId", sourceKey: "id" });
-};

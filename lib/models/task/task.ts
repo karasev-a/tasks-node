@@ -90,8 +90,7 @@ export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
     type: Sequelize.DATE,
   },
 }, {});
-Task.associate = () => {
-  Task.belongsTo(Category, { foreignKey: "categoryId", targetKey: "id" });
-  Task.belongsTo(User, { foreignKey: "userId", targetKey: "id" });
-  Task.belongsToMany(User, { through: "UsersTasks", foreignKey: "taskId" });
-};
+Category.hasMany(Task, { foreignKey: "categoryId", sourceKey: "id" });
+Task.belongsTo(Category, { foreignKey: "categoryId", targetKey: "id" });
+User.hasMany(Task, { foreignKey: "userId", sourceKey: "id" });
+Task.belongsTo(User, { foreignKey: "userId", targetKey: "id" });

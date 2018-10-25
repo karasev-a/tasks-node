@@ -34,7 +34,7 @@ export const UsersTasks = db.define<ITasksCategoriesInstance, ITasksCategoriesAt
     },
   },
 }, {});
-UsersTasks.associate = () => {
-  UsersTasks.belongsTo(User, {foreignKey: "userId" });
-  UsersTasks.belongsTo(Task, { foreignKey: "taskId" });
-};
+
+UsersTasks.belongsTo(User, { foreignKey: "userId" });
+Task.hasMany(UsersTasks, { foreignKey: "taskId", sourceKey: "id" });
+User.hasMany(UsersTasks, { foreignKey: "userId", sourceKey: "id" });

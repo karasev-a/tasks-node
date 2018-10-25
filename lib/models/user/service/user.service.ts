@@ -2,16 +2,12 @@ import { User, IUserAttributes } from "../user";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
 import { OrngError } from "../../../tools/error";
-import { Role } from "../../role/role";
 
 class UserService {
 
     // all
     public async getAll() {
         return User.findAll({
-            include: [{
-                model: Role,
-            }],
         });
     }
 
