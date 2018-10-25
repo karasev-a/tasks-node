@@ -1,7 +1,6 @@
 import * as Sequelize from "sequelize";
 import db from "../../db/models/db";
 import { Task } from "../task/task";
-import {User} from "../user/user";
 
 export interface ICategoryAttributes {
   id?: string;
@@ -37,7 +36,3 @@ export const Category = db.define<ICategoryInstance, ICategoryAttributes>("Categ
     type: Sequelize.DATE,
   },
 }, {});
-Category.associate = () => {
-   Category.hasMany(Task, { foreignKey: "categoryId", sourceKey: "id" });
-   Category.belongsToMany(User, { through: "UsersCategories", foreignKey: "categoryId" });
-};

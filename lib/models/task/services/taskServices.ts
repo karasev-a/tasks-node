@@ -1,35 +1,42 @@
 import { Task, ITaskAttributes, Statuses, ITaskInstance } from "../task";
-import { Op } from "sequelize";
+import * as sequelize from "sequelize";
 import loggers from "tools/loggers";
 import { UsersTasks } from "../../users-tasks/usersTasks";
-import { User } from "models/user/user";
-import { Result } from "range-parser";
 
 class TaskService {
 
     public async getAllTasks(task, otherParams) {
 
         let tasks: ITaskInstance[];
+        const queryParamsToDB: any = {
+            subQuery: false,
+            where: { ...task },
+            include: [{
+                model: UsersTasks,
+                attributes: [],
+            }],
+            attributes: {
+                include: [[sequelize.fn("COUNT", sequelize.col("UsersTasks.userId")), "numberSubscribedPeople"]]
+            },
+            group: ["Task.id"],
+        };
         if (otherParams.offset && otherParams.limit) {
-            tasks = await Task.findAll({
-                where: { ...task },
-                limit: parseInt(otherParams.limit, 10),
-                offset: parseInt(otherParams.offset, 10),
-            });
+            queryParamsToDB.offset = parseInt(otherParams.offset, 10);
+            queryParamsToDB.limit = parseInt(otherParams.limit, 10);
+            tasks = await Task.findAll(queryParamsToDB);
         } else {
-            tasks = await Task.findAll({
-                where: { ...task },
-            });
+            tasks = await Task.findAll(queryParamsToDB);
         }
         return tasks;
     }
 
     public async getOneTask(id: number) {
-        return Task.findOne({
+        const task = Task.findOne({
             where: {
                 id,
             },
         });
+        return task;
     }
 
     public async deleteTaskById(id) {
@@ -105,13 +112,16 @@ class TaskService {
     public getTaskAndParamsFromGetQuery(queryObj) {
         let result;
         let task: ITaskAttributes;
-        let otherParams = {};
-        if (queryObj.limit && queryObj.offset) {
-            otherParams = {
-                limit: queryObj.limit,
-                offset: queryObj.offset,
-            };
+        const otherParams = {
+            limit: 0,
+            offset: 0,
+        };
+        if (queryObj.limit) {
+            otherParams.limit = queryObj.limit;
             delete queryObj.limit;
+        }
+        if (queryObj.offset) {
+            otherParams.offset = queryObj.offset;
             delete queryObj.offset;
         }
         task = queryObj;

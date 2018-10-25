@@ -7,7 +7,8 @@ class UserService {
 
     // all
     public async getAll() {
-        return User.findAll();
+        return User.findAll({
+        });
     }
 
     // by id

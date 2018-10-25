@@ -77,9 +77,5 @@ export const User = db.define<IUserInstance, IUserAttributes>("User", {
 },
 );
 
-User.associate = (models) => {
-  User.hasMany(Task, { foreignKey: "userId", sourceKey: "id" });
-  User.belongsTo(Role, { foreignKey: "roleId", targetKey: "id" });
-  User.belongsToMany(Task, { through: "UsersTasks", foreignKey: "userId" });
-  User.belongsToMany(Category, { through: "UsersCategories", foreignKey: "userId" });
-};
+Role.hasMany(User, { foreignKey: "roleId", sourceKey: "id" });
+User.belongsTo(Role, { foreignKey: "roleId", targetKey: "id" });
