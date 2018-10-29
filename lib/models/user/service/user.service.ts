@@ -88,10 +88,8 @@ class UserService {
 
     // provide token wit id and roleId
     public async auth(user) {
-        return jwt.sign({
-            userId: user.userId,
-            roleId: user.roleId,
-        }, "secret", { expiresIn: "1h" }); // #TODO: add real secreat key
+        const obj = { "roleId": user.roleId, "userId": user.id };
+        return jwt.sign( obj, "secret", { expiresIn: "1h" }); // #TODO: add real secreat key
 
         // redirect to tasks page
         // who should ask api for tasklist?
@@ -101,7 +99,8 @@ class UserService {
     public isAuth(token) {
         let result;
         jwt.verify(token, "secret", (err, decoded) => {
-            err ? result = false : result = true;
+            result = decoded;
+            err ? result = false : result;
         });
         return result;
         // try {
