@@ -29,7 +29,8 @@ class TaskController {
     }
 
     public async createNewTask(req, res) {
-        const task = req.body;
+        let task = req.body;
+        task.userId = req.userId;
         const result = await taskService.createTask(task);
         global.logger.info(`Create task: ${JSON.stringify(task)}`);
         res.status(201).send(result);

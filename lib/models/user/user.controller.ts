@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
-// import { apiErrorHandler } from '../handlers/errorHandler';
 import UserService from "./service/user.service";
-// import loggers from '../../tools/loggers';
 
 class UserController {
     // all
@@ -24,7 +22,6 @@ class UserController {
     }
 
     // Post
-    // #TODO: decide which fields is nessery
     public async create(req: Request, res: Response, next: NextFunction) {
         const model = req.body;
         const result = await UserService.create(model).catch((err) => {

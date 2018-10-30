@@ -29,6 +29,7 @@ class App {
     this.app.use(morgan("combined", { stream: global.logger.info.stream }));
     const port = process.env.PORT;
     this.app.set("port", port);
+
     this.app.use((req: Request, res: Response, next: NextFunction) => {
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader("Access-Control-Allow-Headers",
@@ -36,10 +37,12 @@ class App {
         + "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Cache-Control, Authorization");
       if (req.method === "OPTIONS") {
         res.status(204).end();
+        return;
+      } else {
+        res.setHeader("Access-Control-Allow-Credentials", "true");
+        res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
+        next();
       }
-      res.setHeader("Access-Control-Allow-Credentials", "true");
-      res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
-      next();
     });
 
     this.app.use("/api/v1", routes);

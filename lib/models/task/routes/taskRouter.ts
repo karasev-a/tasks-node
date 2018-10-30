@@ -26,5 +26,4 @@ router.post("/",
   CheckParamsMiddleware.validateParamsJoi(modelSchema.taskSchema),
   handleErrorAsync(taskController.createNewTask));
 
-
 export default router;
