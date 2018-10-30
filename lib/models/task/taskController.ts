@@ -30,6 +30,7 @@ class TaskController {
 
     public async createNewTask(req, res) {
         const task = req.body;
+        task.userId = req.userId;
         const result = await taskService.createTask(task);
         global.logger.info(`Create task: ${JSON.stringify(task)}`);
         res.status(201).send(result);
@@ -39,6 +40,7 @@ class TaskController {
     public async updateTask(req, res) {
         const taskId = parseInt(req.params.taskId, 10);
         const task = req.body;
+        task.userId = req.userId;
         const result = await taskService.updateTask(taskId, task);
         global.logger.info(`Update task: ${JSON.stringify(task)}`);
         res.status(200).send(result);
