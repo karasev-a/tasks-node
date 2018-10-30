@@ -132,11 +132,15 @@ class TaskService {
         return result;
     }
 
-    public isSameUserTask(task) {
-        return this.getTaskOwnerId(task) === task.userId;
+    public async isTaskOwner(taskId, userId) {
+        const res = await this.getTaskOwnerId(taskId);
+        return res.userId === userId;
     }
-    public getTaskOwnerId(task) {
-        return (Task.findById(task.id) as ITaskAttributes).userId;
+    public async getTaskOwnerId(taskId) {
+        console.log("--------------------------------------------------------");
+        console.log( (await (Task.findById(taskId) as ITaskAttributes)));
+        const res = (await (Task.findById(taskId) as ITaskAttributes));
+        return res;
     }
 
 }

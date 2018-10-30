@@ -42,10 +42,10 @@ class TaskController {
         const task = req.body;
         task.userId = req.userId;
         let result;
-        if (taskService.isSameUserTask(task)) {
+        if (taskService.isTaskOwner(taskId, task.userId)) {
             result = await taskService.updateTask(taskId, task);
         } else if (req.roleId === 1) {
-            task.userId = taskService.getTaskOwnerId(task);
+            task.userId = taskService.getTaskOwnerId(taskId);
             result = await taskService.updateTask(taskId, task);
         } else {
             global.logger.info(`Update task: ${JSON.stringify(task)}`);
