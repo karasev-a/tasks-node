@@ -29,7 +29,7 @@ class TaskController {
     }
 
     public async createNewTask(req, res) {
-        let task = req.body;
+        const task = req.body;
         task.userId = req.userId;
         const result = await taskService.createTask(task);
         global.logger.info(`Create task: ${JSON.stringify(task)}`);
@@ -40,7 +40,17 @@ class TaskController {
     public async updateTask(req, res) {
         const taskId = parseInt(req.params.taskId, 10);
         const task = req.body;
-        const result = await taskService.updateTask(taskId, task);
+        task.userId = req.userId;
+        let result;
+        if (taskService.isSameUserTask(task)) {
+            result = await taskService.updateTask(taskId, task);
+        } else if (req.roleId === 1) {
+            task.userId = taskService.getTaskOwnerId(task);
+            result = await taskService.updateTask(taskId, task);
+        } else {
+            global.logger.info(`Update task: ${JSON.stringify(task)}`);
+            res.status(403).end();
+        }
         global.logger.info(`Update task: ${JSON.stringify(task)}`);
         res.status(200).send(result);
     }

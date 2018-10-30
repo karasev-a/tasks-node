@@ -132,5 +132,12 @@ class TaskService {
         return result;
     }
 
+    public isSameUserTask(task) {
+        return this.getTaskOwnerId(task) === task.userId;
+    }
+    public getTaskOwnerId(task) {
+        return (Task.findById(task.id) as ITaskAttributes).userId;
+    }
+
 }
 export default new TaskService();
