@@ -137,7 +137,7 @@ class TaskService {
         return res.userId === userId;
     }
     public async getTaskOwnerId(taskId) {
-        return Task.findById(taskId) as ITaskAttributes;
+        return this.getOneTask(taskId)  as ITaskAttributes;
     }
 
 }

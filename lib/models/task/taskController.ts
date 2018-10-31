@@ -1,6 +1,6 @@
 import taskService from "./services/taskServices";
 import loggers from "../../tools/loggers";
-import { ITaskAttributes } from "./task";
+import { ITaskAttributes, Roles } from "./task";
 class TaskController {
     public async getAllTasks(req, res) {
         const paramsOfGet = taskService.getTaskAndParamsFromGetQuery(req.query);
@@ -44,12 +44,12 @@ class TaskController {
         let result;
         if (await taskService.isTaskOwner(taskId, task.userId)) {
             result = await taskService.updateTask(taskId, task);
-        } else if (req.roleId === 1) {
+        } else if (req.roleId === Roles.admin) {
             task.userId = taskService.getTaskOwnerId(taskId);
             result = await taskService.updateTask(taskId, task);
         } else {
             global.logger.info(`Update task: ${JSON.stringify(task)}`);
-            res.status(403).end();
+            res.status(403).send("You didn't have permission for edit this task").end();
         }
         global.logger.info(`Update task: ${JSON.stringify(task)}`);
         res.status(200).send(result);
