@@ -139,7 +139,7 @@ class TaskService {
     public async getTaskOwnerId(taskId) {
         console.log("--------------------------------------------------------");
         console.log( (await (Task.findById(taskId) as ITaskAttributes)));
-        const res = (await (Task.findById(taskId) as ITaskAttributes));
+        const res = Task.findById(taskId) as ITaskAttributes;
         return res;
     }
 
