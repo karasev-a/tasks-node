@@ -16,7 +16,7 @@ class TaskService {
                 attributes: [],
             }],
             attributes: {
-                include: [[sequelize.fn("COUNT", sequelize.col("UsersTasks.userId")), "numberSubscribedPeople"]]
+                include: [[sequelize.fn("COUNT", sequelize.col("UsersTasks.userId")), "numberSubscribedPeople"]],
             },
             group: ["Task.id"],
         };
@@ -137,10 +137,7 @@ class TaskService {
         return res.userId === userId;
     }
     public async getTaskOwnerId(taskId) {
-        console.log("--------------------------------------------------------");
-        console.log( (await (Task.findById(taskId) as ITaskAttributes)));
-        const res = Task.findById(taskId) as ITaskAttributes;
-        return res;
+        return Task.findById(taskId) as ITaskAttributes;
     }
 
 }
