@@ -1,9 +1,6 @@
 import * as Sequelize from "sequelize";
 import db from "../../db/models/db";
-import { Task } from "../task/task";
 import { Role } from "../role/role";
-import { Category } from "../category/category";
-import * as bcrypt from "bcrypt";
 
 export interface IUserAttributes {
   id?: number;

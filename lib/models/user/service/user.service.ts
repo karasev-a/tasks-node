@@ -90,9 +90,6 @@ class UserService {
     public async auth(user) {
         const obj = { "roleId": user.roleId, "userId": user.id };
         return jwt.sign( obj, "secret", { expiresIn: "1h" }); // #TODO: add real secreat key
-
-        // redirect to tasks page
-        // who should ask api for tasklist?
     }
 
     // check token
@@ -100,15 +97,8 @@ class UserService {
         let result;
         jwt.verify(token, "secret", (err, decoded) => {
             result = decoded;
-            err ? result = false : result;
         });
         return result;
-        // try {
-        //     const tk = jwt.verify(token, "secret");
-        //     return jwt.verify(token, "secret");
-        // } catch (err) {
-        //     return false;
-        // }
     }
 
     // before create bcrypt password
@@ -116,7 +106,7 @@ class UserService {
         const mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|"
             + "((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
         if (!mediumRegex.test(password)) {
-            throw new OrngError("wrong password"); // #TODO: you can add more detail errors like too short, etc.
+            throw new OrngError("wrong password"); // #TODO: Remove this use instead joi.
         }
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(password, salt);
@@ -125,7 +115,7 @@ class UserService {
 
     // compare password
     private isSamePassword(password, hash) {
-        return bcrypt.compareSync(password, hash); // true
+        return bcrypt.compareSync(password, hash);
     }
 
 }

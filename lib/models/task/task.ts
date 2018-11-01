@@ -29,6 +29,12 @@ export enum Statuses {
   Decline = 5,
 }
 
+export enum Roles {
+  admin = 1,
+  manager = 2,
+  user = 3,
+}
+
 export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
   title: {
     type: Sequelize.STRING,
