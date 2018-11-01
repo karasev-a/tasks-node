@@ -1,6 +1,5 @@
 import UserService from "../models/user/service/user.service";
 import { NextFunction, Request, Response } from "express";
-// import { User } from "models/user/user";
 
 class LoginController {
     // Post
@@ -19,7 +18,7 @@ class LoginController {
         let tokenValue;
         if (user) {
             tokenValue = await UserService.auth(user).catch((err) => {
-                // some error
+                // some error #TODO: remove this
             });
             tokenValue ? res.status(201).send({ token: tokenValue }) : res.sendStatus(404);
         }

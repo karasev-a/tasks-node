@@ -16,7 +16,7 @@ class TaskService {
                 attributes: [],
             }],
             attributes: {
-                include: [[sequelize.fn("COUNT", sequelize.col("UsersTasks.userId")), "numberSubscribedPeople"]]
+                include: [[sequelize.fn("COUNT", sequelize.col("UsersTasks.userId")), "numberSubscribedPeople"]],
             },
             group: ["Task.id"],
         };
@@ -132,5 +132,9 @@ class TaskService {
         return result;
     }
 
+    public async isTaskOwner(taskId, userId) {
+        const res = await this.getOneTask(taskId)  as ITaskAttributes;
+        return res.userId === userId;
+    }
 }
 export default new TaskService();
