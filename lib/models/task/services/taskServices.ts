@@ -133,12 +133,8 @@ class TaskService {
     }
 
     public async isTaskOwner(taskId, userId) {
-        const res = await this.getTaskOwnerId(taskId);
+        const res = await this.getOneTask(taskId)  as ITaskAttributes;
         return res.userId === userId;
     }
-    public async getTaskOwnerId(taskId) {
-        return this.getOneTask(taskId)  as ITaskAttributes;
-    }
-
 }
 export default new TaskService();
