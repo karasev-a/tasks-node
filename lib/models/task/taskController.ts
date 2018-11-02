@@ -82,7 +82,7 @@ class TaskController {
             global.logger.info(`User subscribed to task`);
         } else {
             res.status(400).end();
-            global.logger.error({message: `User do not subscribed to task`});
+            global.logger.error({ message: `User do not subscribed to task` });
         }
 
     }
@@ -91,6 +91,17 @@ class TaskController {
         const result = await taskService.getAllTasksOfUser(req.userId);
         res.status(200).send(result);
         global.logger.info(JSON.stringify(result));
+    }
+    public async getOnReviewTasksOfManager(req, res) {
+        const result = await taskService.getOnReviewTasksOfManager(req.userId);
+        if (result.length > 0) {
+            res.status(200).send(result);
+            global.logger.info(JSON.stringify(`User subscribed to task ${result}`));
+        } else {
+            res.status(404).send("404: NotFound");
+            global.logger.error({ message: `User do not have categories, where he is a manager` });
+        }
+
     }
 }
 
