@@ -2,6 +2,8 @@ import { Task, ITaskAttributes, Statuses, ITaskInstance } from "../task";
 import * as sequelize from "sequelize";
 import loggers from "tools/loggers";
 import { UsersTasks } from "../../users-tasks/usersTasks";
+import { UsersCategories } from "../../users-categories/usersCategories";
+import { Category } from "models/category/category";
 
 const Op = sequelize.Op;
 
@@ -53,6 +55,19 @@ class TaskService {
                 include: [[sequelize.fn("COUNT", sequelize.col("UsersTasks.userId")), "numberSubscribedPeople"]],
             },
             group: ["Task.id"],
+        });
+    }
+
+    public async getOnReviewTasksOfManager(userId) {
+        const arrayOfCategortId = await this.getArrauOfCategoryIdOfManager(userId);
+
+        return Task.findAll({
+            where: {
+                categoryId: {
+                    [sequelize.Op.in]: arrayOfCategortId,
+                },
+                status: Statuses.OnReview,
+            },
         });
     }
 
@@ -163,16 +178,26 @@ class TaskService {
         return res.userId === userId;
     }
 
-    public async getArraySubscribedTaskIdOfUser(userIdParam) {
+    public async getArraySubscribedTaskIdOfUser(userId) {
         const subscribedTaskOfUser = await UsersTasks.findAll({
             where: {
-                userId: userIdParam,
+                userId,
             },
         });
 
-        const arrayOfTaskId: number[] = [];
-        subscribedTaskOfUser.forEach( (el) => arrayOfTaskId.push(el.dataValues.taskId) );
+        const arrayOfTaskId: number[] = subscribedTaskOfUser.map( (el) => el.dataValues.taskId );
         return arrayOfTaskId;
+    }
+
+    public async getArrauOfCategoryIdOfManager(userId) {
+        const categoriesOfManager = await UsersCategories.findAll({
+            where: {
+                userId,
+            },
+        });
+
+        const arrayOfCategortId = categoriesOfManager.map( (el) => el.dataValues.categoryId) ;
+        return arrayOfCategortId;
     }
 }
 export default new TaskService();
