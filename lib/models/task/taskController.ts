@@ -6,7 +6,8 @@ class TaskController {
         const paramsOfGet = taskService.getTaskAndParamsFromGetQuery(req.query);
         const task: ITaskAttributes = paramsOfGet.task;
         const otherParams = paramsOfGet.otherParams;
-        const result = await taskService.getAllTasks(task, otherParams);
+        const userId = parseInt(req.userId, 10);
+        const result = await taskService.getAllTasks(task, otherParams, userId);
         res.status(200).send(result);
         global.logger.info(JSON.stringify(result));
     }
@@ -74,7 +75,7 @@ class TaskController {
 
     public async subscribeToTask(req, res) {
         const taskId = parseInt(req.params.taskId, 10);
-        const userId = parseInt(req.params.userId, 10);
+        const userId = req.userId;
         const result = await taskService.subscribeToTask(taskId, userId);
         if (result) {
             res.status(200).send(result);
@@ -84,6 +85,12 @@ class TaskController {
             global.logger.error({message: `User do not subscribed to task`});
         }
 
+    }
+
+    public async getAllTasksOfUser(req, res) {
+        const result = await taskService.getAllTasksOfUser(req.userId);
+        res.status(200).send(result);
+        global.logger.info(JSON.stringify(result));
     }
 }
 

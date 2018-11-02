@@ -15,7 +15,8 @@ const handleErrorAsync = (func) => async (req, res, next) => {
   }
 };
 router.get("/", handleErrorAsync(taskController.getAllTasks));
-router.post("/:taskId/subscription/:userId", handleErrorAsync(taskController.subscribeToTask));
+router.post("/:taskId/subscription", handleErrorAsync(taskController.subscribeToTask));
+router.get("/myTasks", handleErrorAsync(taskController.getAllTasksOfUser));
 router.get("/:taskId", handleErrorAsync(taskController.getOneTask));
 router.delete("/:taskId", handleErrorAsync(taskController.deleteTask));
 router.put("/:taskId",
