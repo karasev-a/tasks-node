@@ -20,13 +20,14 @@ class TaskService {
             },
             group: ["Task.id"],
         };
-        if (otherParams.offset && otherParams.limit) {
+
+        if (otherParams.offset) {
             queryParamsToDB.offset = parseInt(otherParams.offset, 10);
-            queryParamsToDB.limit = parseInt(otherParams.limit, 10);
-            tasks = await Task.findAll(queryParamsToDB);
-        } else {
-            tasks = await Task.findAll(queryParamsToDB);
         }
+        if (otherParams.limit) {
+            queryParamsToDB.limit = parseInt(otherParams.limit, 10);
+        }
+        tasks = await Task.findAll(queryParamsToDB);
         return tasks;
     }
 
@@ -133,7 +134,7 @@ class TaskService {
     }
 
     public async isTaskOwner(taskId, userId) {
-        const res = await this.getOneTask(taskId)  as ITaskAttributes;
+        const res = await this.getOneTask(taskId) as ITaskAttributes;
         return res.userId === userId;
     }
 }

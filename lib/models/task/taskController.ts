@@ -45,7 +45,7 @@ class TaskController {
         if (await taskService.isTaskOwner(taskId, task.userId)) {
             result = await taskService.updateTask(taskId, task);
         } else if (req.roleId === Roles.admin) {
-            task.userId = taskService.getTaskOwnerId(taskId);
+            task.userId = taskService.getOneTask(taskId);
             result = await taskService.updateTask(taskId, task);
         } else {
             global.logger.info(`Update task: ${JSON.stringify(task)}`);
