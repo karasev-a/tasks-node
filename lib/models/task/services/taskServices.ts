@@ -3,14 +3,23 @@ import * as sequelize from "sequelize";
 import loggers from "tools/loggers";
 import { UsersTasks } from "../../users-tasks/usersTasks";
 
+const Op = sequelize.Op;
+
 class TaskService {
 
-    public async getAllTasks(task, otherParams) {
-
+    public async getAllTasks(task, otherParams, userIdParam) {
         let tasks: ITaskInstance[];
+        const arrayOfTaskId = await this.getArraySubscribedTaskIdOfUser(userIdParam);
         const queryParamsToDB: any = {
             subQuery: false,
-            where: { ...task },
+            where: { ...task,
+                id: {
+                    [sequelize.Op.notIn]: arrayOfTaskId,
+                },
+                userId: {
+                    [sequelize.Op.ne]: userIdParam,
+                },
+            },
             include: [{
                 model: UsersTasks,
                 attributes: [],
@@ -29,6 +38,22 @@ class TaskService {
         }
         tasks = await Task.findAll(queryParamsToDB);
         return tasks;
+    }
+
+    public async getAllTasksOfUser(userId) {
+        return Task.findAll({
+            where: {
+                userId,
+            },
+            include: [{
+                model: UsersTasks,
+                attributes: [],
+            }],
+            attributes: {
+                include: [[sequelize.fn("COUNT", sequelize.col("UsersTasks.userId")), "numberSubscribedPeople"]],
+            },
+            group: ["Task.id"],
+        });
     }
 
     public async getOneTask(id: number) {
@@ -136,6 +161,18 @@ class TaskService {
     public async isTaskOwner(taskId, userId) {
         const res = await this.getOneTask(taskId) as ITaskAttributes;
         return res.userId === userId;
+    }
+
+    public async getArraySubscribedTaskIdOfUser(userIdParam) {
+        const subscribedTaskOfUser = await UsersTasks.findAll({
+            where: {
+                userId: userIdParam,
+            },
+        });
+
+        const arrayOfTaskId: number[] = [];
+        subscribedTaskOfUser.forEach( (el) => arrayOfTaskId.push(el.dataValues.taskId) );
+        return arrayOfTaskId;
     }
 }
 export default new TaskService();
