@@ -42,9 +42,13 @@ class TaskService {
         return tasks;
     }
 
-    public async getAllTasksOfUser(userId) {
-        return Task.findAll({
+    public async getAllTasksOfUser(task, otherParams, userId) {
+        let tasks: ITaskInstance[];
+        const queryParamsToDB: any = {
+            subQuery: false,
+            order: [["createdAt", "DESC"]],
             where: {
+                ...task,
                 userId,
             },
             include: [{
@@ -55,7 +59,16 @@ class TaskService {
                 include: [[sequelize.fn("COUNT", sequelize.col("UsersTasks.userId")), "numberSubscribedPeople"]],
             },
             group: ["Task.id"],
-        });
+        };
+        if (otherParams.offset) {
+            queryParamsToDB.offset = parseInt(otherParams.offset, 10);
+        }
+        if (otherParams.limit) {
+            queryParamsToDB.limit = parseInt(otherParams.limit, 10);
+        }
+
+        tasks = await Task.findAll(queryParamsToDB);
+        return tasks;
     }
 
     public async getOnReviewTasksOfManager(userId) {

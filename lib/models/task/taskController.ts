@@ -88,7 +88,11 @@ class TaskController {
     }
 
     public async getAllTasksOfUser(req, res) {
-        const result = await taskService.getAllTasksOfUser(req.userId);
+        const paramsOfGet = taskService.getTaskAndParamsFromGetQuery(req.query);
+        const task: ITaskAttributes = paramsOfGet.task;
+        const otherParams = paramsOfGet.otherParams;
+        const userId = parseInt(req.userId, 10);
+        const result = await taskService.getAllTasksOfUser(task, otherParams, userId);
         res.status(200).send(result);
         global.logger.info(JSON.stringify(result));
     }
