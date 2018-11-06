@@ -3,7 +3,7 @@ import * as sequelize from "sequelize";
 import loggers from "tools/loggers";
 import { UsersTasks } from "../../users-tasks/usersTasks";
 import { UsersCategories } from "../../users-categories/usersCategories";
-import { Category } from "models/category/category";
+import { Category } from "../../category/category";
 
 const Op = sequelize.Op;
 
@@ -14,7 +14,8 @@ class TaskService {
         const arrayOfTaskId = await this.getArraySubscribedTaskIdOfUser(userIdParam);
         const queryParamsToDB: any = {
             subQuery: false,
-            where: { ...task,
+            where: {
+                ...task,
                 id: {
                     [sequelize.Op.notIn]: arrayOfTaskId,
                 },
@@ -44,6 +45,18 @@ class TaskService {
 
     public async getAllTasksOfUser(task, otherParams, userId) {
         let tasks: ITaskInstance[];
+        if (task.title) {
+            task.title = {
+                [Op.like]: (`%${task.title}%`),
+            };
+        }
+        if (otherParams.dateStart && otherParams.dateEnd) {
+            let dateS = new Date(otherParams.dateStart);
+            let dateE = new Date(otherParams.dateEnd);
+            task.date = {
+                [Op.between]: [dateS, dateE],
+            };
+        }
         const queryParamsToDB: any = {
             subQuery: false,
             order: [["createdAt", "DESC"]],
@@ -51,10 +64,16 @@ class TaskService {
                 ...task,
                 userId,
             },
-            include: [{
-                model: UsersTasks,
-                attributes: [],
-            }],
+            include: [
+                {
+                    model: UsersTasks,
+                    attributes: [],
+                },
+                {
+                    model: Category,
+                    attributes: ["name"],
+                },
+            ],
             attributes: {
                 include: [[sequelize.fn("COUNT", sequelize.col("UsersTasks.userId")), "numberSubscribedPeople"]],
             },
@@ -178,6 +197,14 @@ class TaskService {
             otherParams.offset = queryObj.offset;
             delete queryObj.offset;
         }
+        if (queryObj.dateStart) {
+            otherParams['dateStart'] = queryObj.dateStart;
+            delete queryObj.dateStart;
+        }
+        if (queryObj.dateEnd) {
+            otherParams['dateEnd'] = queryObj.dateEnd;
+            delete queryObj.dateEnd;
+        }
         task = queryObj;
         result = {
             task,
@@ -198,7 +225,7 @@ class TaskService {
             },
         });
 
-        const arrayOfTaskId: number[] = subscribedTaskOfUser.map( (el) => el.dataValues.taskId );
+        const arrayOfTaskId: number[] = subscribedTaskOfUser.map((el) => el.dataValues.taskId);
         return arrayOfTaskId;
     }
 
@@ -209,7 +236,7 @@ class TaskService {
             },
         });
 
-        const arrayOfCategortId = categoriesOfManager.map( (el) => el.dataValues.categoryId) ;
+        const arrayOfCategortId = categoriesOfManager.map((el) => el.dataValues.categoryId);
         return arrayOfCategortId;
     }
 }

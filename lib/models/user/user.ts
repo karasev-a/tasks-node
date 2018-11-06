@@ -1,6 +1,7 @@
 import * as Sequelize from "sequelize";
 import db from "../../db/models/db";
 import { Role } from "../role/role";
+import { Category } from "../category/category";
 
 export interface IUserAttributes {
   id?: number;
@@ -76,3 +77,4 @@ export const User = db.define<IUserInstance, IUserAttributes>("User", {
 
 Role.hasMany(User, { foreignKey: "roleId", sourceKey: "id" });
 User.belongsTo(Role, { foreignKey: "roleId", targetKey: "id" });
+// Category.hasMany(User, { foreignKey: "categoryId", sourceKey: "id" });
