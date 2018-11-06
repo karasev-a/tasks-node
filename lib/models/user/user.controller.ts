@@ -1,10 +1,22 @@
 import { NextFunction, Request, Response, Router } from "express";
 import UserService from "./service/user.service";
+import { IUserAttributes } from "./user";
 
 class UserController {
     // all
+    // public async getAll(req: Request, res: Response, next: NextFunction) {
+    //     res.status(200).send(await UserService.getAll());
+    // }
+
     public async getAll(req: Request, res: Response, next: NextFunction) {
-        res.status(200).send(await UserService.getAll());
+        // let curentUser;
+        if (req.query.curentUser === true ) {
+            console.log(req);
+            // req.userId;
+            // res.status(200).send(await UserService.getById(parseInt(req.userId, 10));
+        } else {
+            res.status(200).send(await UserService.getAll());
+        }
     }
 
     // by Id

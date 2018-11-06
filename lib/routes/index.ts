@@ -8,9 +8,9 @@ import loginRouter from "./loginRouter";
 import { isLogin } from "../middleware/isLogin";
 
 const router = express.Router();
-router.use("/users", userRouter);
 router.use("/", loginRouter);
 
+router.use("/users", isLogin, userRouter);
 router.use("/tasks", isLogin, taskRouter);
 router.use("/users", isLogin, userRouter);
 router.use("/categories", categoryRouter);
