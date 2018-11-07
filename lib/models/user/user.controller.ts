@@ -48,15 +48,25 @@ class UserController {
      // Put
      public async update(req, res: Response, next: NextFunction) {
         let userId;
+        const model = req.body;
         // check is it have id in parametr it is meaning that it is admin
         if (req.params.userId) {
             userId = req.params.userId;
-        } else { // this is just user trying update profile
+        } else { // this is just user, trying update profile
             userId = parseInt(req.userId, 10);
-            // check current password
-            // if (UserService.isSamePassword(cPswd))
+            // check if it try to change password
+            if (model.oldPswd) {
+                const currentUSer = await UserService.getById(userId);
+                // password equal
+                if (UserService.isSamePassword(model.oldPswd, currentUSer.dataValues.password)) {
+                    model.password = UserService.bcryptPassword(model.newPswd);
+                    delete model.oldPswd;
+                    delete model.newPswd;
+                } else {
+                    res.status(400).send("old password wrong").end();
+                }
+            }
         }
-        const model = req.body;
         res.status(200).send(await UserService.update(userId, model));
     }
 }
