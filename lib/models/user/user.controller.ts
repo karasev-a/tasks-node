@@ -46,8 +46,16 @@ class UserController {
     }
 
      // Put
-     public async update(req: Request, res: Response, next: NextFunction) {
-        const userId = parseInt(req.params.userId, 10);
+     public async update(req, res: Response, next: NextFunction) {
+        let userId;
+        // check is it have id in parametr it is meaning that it is admin
+        if (req.params.userId) {
+            userId = req.params.userId;
+        } else { // this is just user trying update profile
+            userId = parseInt(req.userId, 10);
+            // check current password
+            // if (UserService.isSamePassword(cPswd))
+        }
         const model = req.body;
         res.status(200).send(await UserService.update(userId, model));
     }

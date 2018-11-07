@@ -48,6 +48,17 @@ class UserService {
     public async update(userId, model) {
         if (model && Number.isInteger(userId)) {
             // #TODO: add bcrypt before update password;
+            if (model.oldPswd) {
+                const currentUSer = await this.getById(userId);
+                // password equal
+                if (this.isSamePassword(model.oldPswd, currentUSer.dataValues.password)) {
+                    model.password = this.bcryptPassword(model.newPswd);
+                    delete model.oldPswd;
+                    delete model.newPswd;
+                } else {
+                    return false;
+                }
+            }
             delete model[userId];
             const result = await User.update(model, { where: { id: userId } });
             return !!result[0];
@@ -102,7 +113,7 @@ class UserService {
     }
 
     // before create bcrypt password
-    private bcryptPassword(password) {
+    public bcryptPassword(password) {
         const mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|"
             + "((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
         if (!mediumRegex.test(password)) {
@@ -114,7 +125,7 @@ class UserService {
     }
 
     // compare password
-    private isSamePassword(password, hash) {
+    public isSamePassword(password, hash) {
         return bcrypt.compareSync(password, hash);
     }
 
