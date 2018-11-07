@@ -11,10 +11,10 @@ const handleErrorAsync = (func) => async (req, res, next) => {
     }
   };
 
-router.get("/:userId", handleErrorAsync, UserController.getById);
-router.delete("/:userId", handleErrorAsync, UserController.delete);
-router.put("/:userId", handleErrorAsync, UserController.update);
-router.post("/", handleErrorAsync, UserController.create);
-router.get("/", handleErrorAsync, UserController.getAll);
+router.get("/:userId", UserController.getById);
+router.delete("/:userId", UserController.delete);
+router.put("/:userId", UserController.update);
+router.post("/", UserController.create);
+router.get("/", UserController.getAll);
 
 export default router;

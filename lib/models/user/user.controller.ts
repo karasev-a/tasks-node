@@ -8,12 +8,11 @@ class UserController {
     //     res.status(200).send(await UserService.getAll());
     // }
 
-    public async getAll(req: Request, res: Response, next: NextFunction) {
+    public async getAll(req, res: Response, next: NextFunction) {
         // let curentUser;
-        if (req.query.curentUser === true ) {
+        if (req.query.current === "true" ) {
             console.log(req);
-            // req.userId;
-            // res.status(200).send(await UserService.getById(parseInt(req.userId, 10));
+            res.status(200).send(await UserService.getById(parseInt(req.userId, 10)));
         } else {
             res.status(200).send(await UserService.getAll());
         }
