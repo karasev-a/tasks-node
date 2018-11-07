@@ -51,8 +51,8 @@ class TaskService {
             };
         }
         if (otherParams.dateStart && otherParams.dateEnd) {
-            let dateS = new Date(otherParams.dateStart);
-            let dateE = new Date(otherParams.dateEnd);
+            const dateS = new Date(otherParams.dateStart);
+            const dateE = new Date(otherParams.dateEnd);
             task.date = {
                 [Op.between]: [dateS, dateE],
             };
@@ -113,6 +113,7 @@ class TaskService {
     }
 
     public async deleteTaskById(id) {
+        
         return Number.isInteger(id)
             ? Task.destroy({
                 where: {
