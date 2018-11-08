@@ -35,5 +35,7 @@ export const UsersCategories = db.define<IUsersCategoriesInstance, IUsersCategor
   },
 }, {});
 
+// UsersCategories.belongsTo(User, { foreignKey: "userId" });
+// UsersCategories.belongsTo(Category, { foreignKey: "categoryId" });
 User.hasMany(UsersCategories, { foreignKey: "userId", sourceKey: "id" });
 Category.hasMany(UsersCategories, { foreignKey: "categoryId", sourceKey: "id" });

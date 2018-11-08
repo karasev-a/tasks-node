@@ -4,6 +4,7 @@ import loggers from "tools/loggers";
 import { UsersTasks } from "../../users-tasks/usersTasks";
 import { UsersCategories } from "../../users-categories/usersCategories";
 import { Category } from "../../category/category";
+import { User } from "../../user/user";
 
 const Op = sequelize.Op;
 
@@ -90,15 +91,39 @@ class TaskService {
         return tasks;
     }
 
-    public async getOnReviewTasksOfManager(userId) {
-        const arrayOfCategortId = await this.getArrauOfCategoryIdOfManager(userId);
+    public async getOnReviewTasksOfManager(userId, arrayCategoryIdFromGet) {
+        const arrayOfCategoryId = await this.getArrayOfCategoryIdOfManager(userId);
+
+        let result: number[];
+
+        if (arrayCategoryIdFromGet && arrayCategoryIdFromGet.length > 0) {
+            result = arrayCategoryIdFromGet;
+        } else {
+            result = arrayOfCategoryId;
+        }
 
         return Task.findAll({
             where: {
                 categoryId: {
-                    [sequelize.Op.in]: arrayOfCategortId,
+                    [sequelize.Op.in]: result,
                 },
                 status: Statuses.OnReview,
+            },
+            include: [
+                {
+                    model: User,
+                    attributes: [],
+                },
+                {
+                    model: Category,
+                    attributes: ["name"],
+                },
+            ],
+            attributes: {
+                // include: [[sequelize.fn("COUNT", sequelize.col("UsersTasks.userId")), "numberSubscribedPeople"]],
+                include: [
+                    [sequelize.fn("concat", sequelize.col("firstname"), " ", sequelize.col("lastname")), "firstLastName"],
+                ],
             },
         });
     }
@@ -113,7 +138,7 @@ class TaskService {
     }
 
     public async deleteTaskById(id) {
-        
+
         return Number.isInteger(id)
             ? Task.destroy({
                 where: {
@@ -230,7 +255,7 @@ class TaskService {
         return arrayOfTaskId;
     }
 
-    public async getArrauOfCategoryIdOfManager(userId) {
+    public async getArrayOfCategoryIdOfManager(userId) {
         const categoriesOfManager = await UsersCategories.findAll({
             where: {
                 userId,
@@ -240,5 +265,7 @@ class TaskService {
         const arrayOfCategortId = categoriesOfManager.map((el) => el.dataValues.categoryId);
         return arrayOfCategortId;
     }
+
+
 }
 export default new TaskService();

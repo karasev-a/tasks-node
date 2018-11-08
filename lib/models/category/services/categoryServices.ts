@@ -1,4 +1,6 @@
 import { Category, ICategoryAttributes} from "../category";
+import * as sequelize from "sequelize";
+import { UsersCategories } from "../../users-categories/usersCategories";
 
 class TaskService {
 
@@ -40,6 +42,23 @@ class TaskService {
         if (category) {
             return Category.create(category);
         }
+    }
+
+    public async  getCategoriesOfManager(userId) {
+        const categoriesOfManager = await UsersCategories.findAll({
+            where: {
+                userId,
+            },
+        });
+
+        const arrayOfCategortId = categoriesOfManager.map((el) => el.dataValues.categoryId);
+        return Category.findAll({
+            where: {
+                id: {
+                    [sequelize.Op.in]: arrayOfCategortId,
+                },
+            },
+        });
     }
 
 }

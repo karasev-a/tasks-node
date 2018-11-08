@@ -108,7 +108,15 @@ class TaskController {
         global.logger.info(JSON.stringify(result));
     }
     public async getOnReviewTasksOfManager(req, res) {
-        const result = await taskService.getOnReviewTasksOfManager(req.userId);
+        let arrayCategoryIdFromGet: number[] = [];
+        if (req.query.categoryId) {
+            if (Array.isArray(req.query.categoryId)) {
+                arrayCategoryIdFromGet = req.query.categoryId.map( (el) => parseInt(el, 10));
+            } else {
+                arrayCategoryIdFromGet.push(parseInt(req.query.categoryId, 10));
+            }
+        }
+        const result = await taskService.getOnReviewTasksOfManager(req.userId, arrayCategoryIdFromGet);
         if (result.length > 0) {
             res.status(200).send(result);
             global.logger.info(JSON.stringify(`User subscribed to task ${result}`));
@@ -118,6 +126,11 @@ class TaskController {
         }
 
     }
+
+    // public async getAllTasksOfManager(req, res) {
+    //     const result = await taskService.getAllTasksOfManager(req.userId);
+    //     res.status(200).send(result);
+    // }
 }
 
 export default new TaskController();
