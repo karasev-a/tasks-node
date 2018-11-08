@@ -25,8 +25,19 @@ class TaskController {
 
     public async deleteTask(req, res) {
         const taskId = parseInt(req.params.taskId, 10);
-        const result = await taskService.deleteTaskById(taskId);
-        result ? res.sendStatus(204) : res.sendStatus(404);
+        const userId = req.userId;
+        let result;
+        if (await taskService.isTaskOwner(taskId, userId)) {
+            result = await taskService.deleteTaskById(taskId);
+            global.logger.info(`Task wtith id=${taskId} was deleted by user!`);
+        } else if (req.roleId === Roles.admin) {
+            result = await taskService.deleteTaskById(taskId);
+            global.logger.info(`Task wtith id=${taskId} was deleted by admin!`);
+        } else {
+            global.logger.info(`Task wtith id=${taskId} was not deleted`);
+            res.status(403).send("You didn't have permission for delete this task").end();
+        }
+        res.status(200).send(`Task was deleted!`);
     }
 
     public async createNewTask(req, res) {
@@ -88,7 +99,11 @@ class TaskController {
     }
 
     public async getAllTasksOfUser(req, res) {
-        const result = await taskService.getAllTasksOfUser(req.userId);
+        const paramsOfGet = taskService.getTaskAndParamsFromGetQuery(req.query);
+        const task: ITaskAttributes = paramsOfGet.task;
+        const otherParams = paramsOfGet.otherParams;
+        const userId = parseInt(req.userId, 10);
+        const result = await taskService.getAllTasksOfUser(task, otherParams, userId);
         res.status(200).send(result);
         global.logger.info(JSON.stringify(result));
     }
