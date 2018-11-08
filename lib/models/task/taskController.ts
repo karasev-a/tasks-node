@@ -34,7 +34,7 @@ class TaskController {
             result = await taskService.deleteTaskById(taskId);
             global.logger.info(`Task wtith id=${taskId} was deleted by admin!`);
         } else {
-            global.logger.info(`Task wtith id=${taskId} doesn't delete!`);
+            global.logger.info(`Task wtith id=${taskId} was not deleted`);
             res.status(403).send("You didn't have permission for delete this task").end();
         }
         res.status(200).send(`Task was deleted!`);
