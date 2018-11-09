@@ -113,7 +113,7 @@ class TaskService {
     }
 
     public async deleteTaskById(id) {
-        
+
         return Number.isInteger(id)
             ? Task.destroy({
                 where: {
@@ -240,5 +240,20 @@ class TaskService {
         const arrayOfCategortId = categoriesOfManager.map((el) => el.dataValues.categoryId);
         return arrayOfCategortId;
     }
+
+    public async getTasksStatistics(categoryId) {
+        const query = {
+            where: {},
+        };
+
+        query.where = {
+            categoryId: 1,
+            status: Statuses.OnReview,
+        };
+        const result = await Task.findAll(query);
+        console.log(result.length);
+        return result;
+    }
+
 }
 export default new TaskService();

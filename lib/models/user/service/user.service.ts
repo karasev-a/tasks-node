@@ -47,17 +47,6 @@ class UserService {
     // Put
     public async update(userId, model) {
         if (model && Number.isInteger(userId)) {
-            // if (model.oldPswd) {
-            //     const currentUSer = await this.getById(userId);
-            //     // password equal
-            //     if (this.isSamePassword(model.oldPswd, currentUSer.dataValues.password)) {
-            //         model.password = this.bcryptPassword(model.newPswd);
-            //         delete model.oldPswd;
-            //         delete model.newPswd;
-            //     } else {
-            //         return false;
-            //     }
-            // }
             delete model[userId];
             const result = await User.update(model, { where: { id: userId } });
             return !!result[0];

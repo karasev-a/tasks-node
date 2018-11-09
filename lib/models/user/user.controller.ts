@@ -3,15 +3,10 @@ import UserService from "./service/user.service";
 import { IUserAttributes } from "./user";
 
 class UserController {
-    // all
-    // public async getAll(req: Request, res: Response, next: NextFunction) {
-    //     res.status(200).send(await UserService.getAll());
-    // }
-
+    // TODO:
     public async getAll(req, res: Response, next: NextFunction) {
         // let curentUser;
         if (req.query.current === "true" ) {
-            console.log(req);
             res.status(200).send(await UserService.getById(parseInt(req.userId, 10)));
         } else {
             res.status(200).send(await UserService.getAll());
