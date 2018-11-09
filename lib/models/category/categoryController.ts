@@ -47,7 +47,7 @@ class CategoryController {
             res.status(200).send(result);
             global.logger.info(`Categories of manager with id=${userId}: ${result}`);
         } else {
-            res.sendStatus(404);
+            res.status(404).send("User does not have permission");
         }
     }
 }

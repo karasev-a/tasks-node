@@ -45,19 +45,15 @@ class TaskService {
     }
 
     public async  getCategoriesOfManager(userId) {
-        const categoriesOfManager = await UsersCategories.findAll({
-            where: {
-                userId,
-            },
-        });
 
-        const arrayOfCategortId = categoriesOfManager.map((el) => el.dataValues.categoryId);
         return Category.findAll({
-            where: {
-                id: {
-                    [sequelize.Op.in]: arrayOfCategortId,
+            include: [{
+                model: UsersCategories,
+                where: {
+                    userId,
                 },
-            },
+                attributes: [],
+            }],
         });
     }
 

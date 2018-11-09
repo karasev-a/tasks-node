@@ -52,12 +52,12 @@ class TaskController {
     public async updateTask(req, res) {
         const taskId = parseInt(req.params.taskId, 10);
         const task = req.body;
-        task.userId = req.userId;
+        // task.userId = req.userId;
         let result;
-        if (await taskService.isTaskOwner(taskId, task.userId)) {
+        if (await taskService.isTaskOwner(taskId, req.userId)) {
             result = await taskService.updateTask(taskId, task);
-        } else if (req.roleId === Roles.admin) {
-            task.userId = taskService.getOneTask(taskId);
+        } else if (req.roleId === Roles.admin || req.roleId === Roles.manager) {
+            // task.userId = taskService.getOneTask(taskId);
             result = await taskService.updateTask(taskId, task);
         } else {
             global.logger.info(`Update task: ${JSON.stringify(task)}`);
@@ -109,20 +109,26 @@ class TaskController {
     }
     public async getOnReviewTasksOfManager(req, res) {
         let arrayCategoryIdFromGet: number[] = [];
-        if (req.query.categoryId) {
-            if (Array.isArray(req.query.categoryId)) {
-                arrayCategoryIdFromGet = req.query.categoryId.map( (el) => parseInt(el, 10));
-            } else {
-                arrayCategoryIdFromGet.push(parseInt(req.query.categoryId, 10));
-            }
-        }
-        const result = await taskService.getOnReviewTasksOfManager(req.userId, arrayCategoryIdFromGet);
-        if (result.length > 0) {
-            res.status(200).send(result);
-            global.logger.info(JSON.stringify(`User subscribed to task ${result}`));
+        if (req.roleId !== 2) {
+            global.logger.error({ message: `User does not have permission` });
+            res.status(404).send("404: NotFound").end();
         } else {
-            res.status(404).send("404: NotFound");
-            global.logger.error({ message: `User do not have categories, where he is a manager` });
+            if (req.query.categoryId) {
+                if (Array.isArray(req.query.categoryId)) {
+                    arrayCategoryIdFromGet = req.query.categoryId.map((el) => parseInt(el, 10));
+                } else {
+                    arrayCategoryIdFromGet.push(parseInt(req.query.categoryId, 10));
+                }
+            }
+            const result = await taskService.getOnReviewTasksOfManager(req.userId, arrayCategoryIdFromGet);
+            if (result.length > 0) {
+                res.status(200).send(result);
+                global.logger.info(JSON.stringify(`User subscribed to task ${result}`));
+            } else {
+                res.status(404).send("404: NotFound");
+                global.logger.error({ message: `User do not have categories, where he is a manager` });
+            }
+
         }
 
     }
