@@ -44,7 +44,7 @@ class TaskService {
         return tasks;
     }
 
-    public async getAllTasksOfUser(task, otherParams, userId) {
+    public async getAllTasksOfUser(task, otherParams, userId, arrayCategoryIdFromGet) {
         let tasks: ITaskInstance[];
         if (task.title) {
             task.title = {
@@ -56,6 +56,11 @@ class TaskService {
             const dateE = new Date(otherParams.dateEnd);
             task.date = {
                 [Op.between]: [dateS, dateE],
+            };
+        }
+        if (task.categoryId) {
+            task.categoryId = {
+                [sequelize.Op.in]: arrayCategoryIdFromGet,
             };
         }
         const queryParamsToDB: any = {
@@ -265,7 +270,6 @@ class TaskService {
         const arrayOfCategortId = categoriesOfManager.map((el) => el.dataValues.categoryId);
         return arrayOfCategortId;
     }
-
 
 }
 export default new TaskService();

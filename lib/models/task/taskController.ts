@@ -99,17 +99,33 @@ class TaskController {
     }
 
     public async getAllTasksOfUser(req, res) {
+        let arrayCategoryIdFromGet: number[] = [];
         const paramsOfGet = taskService.getTaskAndParamsFromGetQuery(req.query);
         const task: ITaskAttributes = paramsOfGet.task;
         const otherParams = paramsOfGet.otherParams;
         const userId = parseInt(req.userId, 10);
-        const result = await taskService.getAllTasksOfUser(task, otherParams, userId);
-        res.status(200).send(result);
-        global.logger.info(JSON.stringify(result));
+
+        if ((req.roleId === Roles.user) || (req.roleId === Roles.admin)) {
+            if (task.categoryId) {
+                if (Array.isArray(req.query.categoryId)) {
+                    arrayCategoryIdFromGet = req.query.categoryId.map((el) => parseInt(el, 10));
+                } else {
+                    arrayCategoryIdFromGet.push(parseInt(req.query.categoryId, 10));
+                }
+            }
+            const result = await taskService.getAllTasksOfUser(task, otherParams, userId, arrayCategoryIdFromGet);
+            res.status(200).send(result);
+            global.logger.info(JSON.stringify(result));
+
+        } else {
+            global.logger.error({ message: `User does not have permission` });
+            res.status(404).send("404: NotFound").end();
+        }
     }
+
     public async getOnReviewTasksOfManager(req, res) {
         let arrayCategoryIdFromGet: number[] = [];
-        if (req.roleId !== 2) {
+        if (req.roleId !== Roles.manager) {
             global.logger.error({ message: `User does not have permission` });
             res.status(404).send("404: NotFound").end();
         } else {
@@ -133,10 +149,6 @@ class TaskController {
 
     }
 
-    // public async getAllTasksOfManager(req, res) {
-    //     const result = await taskService.getAllTasksOfManager(req.userId);
-    //     res.status(200).send(result);
-    // }
 }
 
 export default new TaskController();
