@@ -4,21 +4,16 @@ import * as joi from "joi";
 import taskController from "../taskController";
 import CheckParamsMiddleware from "../../../middleware/validation/check-params.middleware";
 import * as modelSchema from "../../../middleware/validation/modelSchema";
+import {handleErrorAsync} from "../../../middleware/handleErrorAsync";
+import {checkAdmin, checkManagerOrAdmin} from "../../../middleware/check-role.midleware";
 
 const router: Router = Router();
 
-const handleErrorAsync = (func) => async (req, res, next) => {
-  try {
-    await func(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-};
 router.get("/", handleErrorAsync(taskController.getAllTasks));
 router.post("/:taskId/subscription", handleErrorAsync(taskController.subscribeToTask));
 router.get("/myTasks", handleErrorAsync(taskController.getAllTasksOfUser));
-router.get("/admintasks", handleErrorAsync(taskController.getAllTasksForAdmin));
-router.get("/managerTasks", handleErrorAsync(taskController.getOnReviewTasksOfManager));
+router.get("/admintasks", checkAdmin, handleErrorAsync(taskController.getAllTasksForAdmin));
+router.get("/managerTasks", checkManagerOrAdmin, handleErrorAsync(taskController.getOnReviewTasks));
 router.get("/:taskId", handleErrorAsync(taskController.getOneTask));
 router.delete("/:taskId", handleErrorAsync(taskController.deleteTask));
 router.put("/:taskId",

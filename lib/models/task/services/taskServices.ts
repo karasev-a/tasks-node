@@ -1,4 +1,4 @@
-import { Task, ITaskAttributes, Statuses, ITaskInstance } from "../task";
+import { Task, ITaskAttributes, Statuses, ITaskInstance, Roles } from "../task";
 import * as sequelize from "sequelize";
 import loggers from "tools/loggers";
 import { UsersTasks } from "../../users-tasks/usersTasks";
@@ -105,8 +105,14 @@ class TaskService {
             ],
             attributes: {
                 include: [
-                    [sequelize.fn("COUNT", sequelize.col("UsersTasks.userId")), "numberSubscribedPeople"],
-                    [sequelize.fn("concat", sequelize.col("User.firstname"), " ", sequelize.col("User.lastname")), "firstLastName"],
+                    [
+                        sequelize.fn("COUNT", sequelize.col("UsersTasks.userId")),
+                        "numberSubscribedPeople",
+                    ],
+                    [
+                        sequelize.fn("concat", sequelize.col("User.firstname"),
+                            " ", sequelize.col("User.lastname")), "firstLastName",
+                    ],
                 ],
             },
             group: ["Task.id"],
@@ -121,26 +127,42 @@ class TaskService {
         tasks = await Task.findAll(queryParamsToDB);
         return tasks;
     }
-    
 
-    public async getOnReviewTasksOfManager(userId, arrayCategoryIdFromGet) {
-        const arrayOfCategoryId = await this.getArrayOfCategoryIdOfManager(userId);
-
+    public async getOnReviewTasksOfManager(userId, arrayCategoryIdFromGetForFilter) {
+        const user = await User.findById(userId);
         let result: number[];
+        let whereParams;
+        
 
-        if (arrayCategoryIdFromGet && arrayCategoryIdFromGet.length > 0) {
-            result = arrayCategoryIdFromGet;
-        } else {
-            result = arrayOfCategoryId;
-        }
-
-        return Task.findAll({
-            where: {
+        if (user.dataValues.roleId === Roles.manager) {
+            if (arrayCategoryIdFromGetForFilter && arrayCategoryIdFromGetForFilter.length > 0) {
+                result = arrayCategoryIdFromGetForFilter;
+            } else {
+                result = await this.getArrayOfCategoryIdOfManager(userId);
+            }
+            whereParams = {
                 categoryId: {
                     [sequelize.Op.in]: result,
                 },
                 status: Statuses.OnReview,
-            },
+            };
+        } else {
+            if (arrayCategoryIdFromGetForFilter && arrayCategoryIdFromGetForFilter.length > 0) {
+                whereParams = {
+                    categoryId: {
+                        [sequelize.Op.in]: arrayCategoryIdFromGetForFilter,
+                    },
+                    status: Statuses.OnReview,
+                };
+            } else {
+                whereParams = {
+                    status: Statuses.OnReview,
+                };
+            }
+        }
+
+        return Task.findAll({
+            where: whereParams,
             include: [
                 {
                     model: User,
@@ -152,9 +174,11 @@ class TaskService {
                 },
             ],
             attributes: {
-                // include: [[sequelize.fn("COUNT", sequelize.col("UsersTasks.userId")), "numberSubscribedPeople"]],
                 include: [
-                    [sequelize.fn("concat", sequelize.col("firstname"), " ", sequelize.col("lastname")), "firstLastName"],
+                    [
+                        sequelize.fn("concat", sequelize.col("firstname"), " ",
+                        sequelize.col("lastname")), "firstLastName",
+                    ],
                 ],
             },
         });
@@ -314,11 +338,9 @@ class TaskService {
         }
 
         if (task.categoryId) {
-            if (Array.isArray(task.categoryId)) {
-                arrayCategoryIdFromGet = task.categoryId.map((el) => parseInt(el, 10));
-            } else {
-                arrayCategoryIdFromGet.push(parseInt(task.categoryId, 10));
-            }
+            Array.isArray(task.categoryId)
+                ? arrayCategoryIdFromGet = task.categoryId.map((el) => parseInt(el, 10))
+                : arrayCategoryIdFromGet.push(parseInt(task.categoryId, 10));
             task.categoryId = {
                 [sequelize.Op.in]: arrayCategoryIdFromGet,
             };

@@ -1,6 +1,7 @@
 import categoryService from "./services/categoryServices";
 import loggers from "../../tools/loggers";
 import { ICategoryAttributes, ICategoryInstance } from "./category";
+import { Roles } from "../task/task";
 class CategoryController {
     public async getAllCategories(req, res) {
         const result = await categoryService.getAllCategories();
@@ -39,16 +40,12 @@ class CategoryController {
         global.logger.info(`Update categoty: ${category}`);
         res.status(200).send(result);
     }
-    public async getCategoriesOfManager(req, res) {
+    public async getCategoriesOnReview(req, res) {
         const userId = req.userId;
         let result;
-        if (req.roleId === 2) {
-            result = await categoryService.getCategoriesOfManager(userId);
-            res.status(200).send(result);
-            global.logger.info(`Categories of manager with id=${userId}: ${result}`);
-        } else {
-            res.status(404).send("User does not have permission");
-        }
+        result = await categoryService.getCategoriesOnReview(userId);
+        res.status(200).send(result);
+        global.logger.info(`Categories is on review`);
     }
 }
 
