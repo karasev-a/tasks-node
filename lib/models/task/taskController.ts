@@ -99,33 +99,35 @@ class TaskController {
     }
 
     public async getAllTasksOfUser(req, res) {
-        let arrayCategoryIdFromGet: number[] = [];
         const paramsOfGet = taskService.getTaskAndParamsFromGetQuery(req.query);
         const task: ITaskAttributes = paramsOfGet.task;
         const otherParams = paramsOfGet.otherParams;
         const userId = parseInt(req.userId, 10);
+        const result = await taskService.getAllTasksOfUser(task, otherParams, userId);
+        res.status(200).send(result);
+        global.logger.info(JSON.stringify(result));
+    }
 
-        if ((req.roleId === Roles.user) || (req.roleId === Roles.admin)) {
-            if (task.categoryId) {
-                if (Array.isArray(req.query.categoryId)) {
-                    arrayCategoryIdFromGet = req.query.categoryId.map((el) => parseInt(el, 10));
-                } else {
-                    arrayCategoryIdFromGet.push(parseInt(req.query.categoryId, 10));
-                }
-            }
-            const result = await taskService.getAllTasksOfUser(task, otherParams, userId, arrayCategoryIdFromGet);
+    public async getAllTasksForAdmin(req, res) {
+        const paramsOfGet = taskService.getTaskAndParamsFromGetQuery(req.query);
+        const task: ITaskAttributes = paramsOfGet.task;
+        const otherParams = paramsOfGet.otherParams;
+        const userId = parseInt(req.userId, 10);
+        let result;
+
+        if (req.roleId === Roles.admin) {
+            result = await taskService.getAllTasksForAdmin(task, otherParams);
             res.status(200).send(result);
-            global.logger.info(JSON.stringify(result));
-
+            global.logger.info(`Admin get all task`);
         } else {
-            global.logger.error({ message: `User does not have permission` });
-            res.status(404).send("404: NotFound").end();
+            global.logger.info(`User is not admin for view task`);
+            res.status(403).send("You didn't have permission for view all task").end();
         }
     }
 
     public async getOnReviewTasksOfManager(req, res) {
         let arrayCategoryIdFromGet: number[] = [];
-        if (req.roleId !== Roles.manager) {
+        if ((req.roleId !== Roles.manager) || (req.roleId !== Roles.admin)) {
             global.logger.error({ message: `User does not have permission` });
             res.status(404).send("404: NotFound").end();
         } else {
@@ -139,7 +141,7 @@ class TaskController {
             const result = await taskService.getOnReviewTasksOfManager(req.userId, arrayCategoryIdFromGet);
             if (result.length > 0) {
                 res.status(200).send(result);
-                global.logger.info(JSON.stringify(`User subscribed to task ${result}`));
+                global.logger.info(JSON.stringify(`User get tasks, where he is manager`));
             } else {
                 res.status(404).send("404: NotFound");
                 global.logger.error({ message: `User do not have categories, where he is a manager` });

@@ -44,30 +44,14 @@ class TaskService {
         return tasks;
     }
 
-    public async getAllTasksOfUser(task, otherParams, userId, arrayCategoryIdFromGet) {
+    public async getAllTasksOfUser(task, otherParams, userId) {
         let tasks: ITaskInstance[];
-        if (task.title) {
-            task.title = {
-                [Op.like]: (`%${task.title}%`),
-            };
-        }
-        if (otherParams.dateStart && otherParams.dateEnd) {
-            const dateS = new Date(otherParams.dateStart);
-            const dateE = new Date(otherParams.dateEnd);
-            task.date = {
-                [Op.between]: [dateS, dateE],
-            };
-        }
-        if (task.categoryId) {
-            task.categoryId = {
-                [sequelize.Op.in]: arrayCategoryIdFromGet,
-            };
-        }
+        const taskFilter = this.filterTasks(task, otherParams);
         const queryParamsToDB: any = {
             subQuery: false,
             order: [["createdAt", "DESC"]],
             where: {
-                ...task,
+                ...taskFilter,
                 userId,
             },
             include: [
@@ -95,6 +79,49 @@ class TaskService {
         tasks = await Task.findAll(queryParamsToDB);
         return tasks;
     }
+
+    public async getAllTasksForAdmin(task, otherParams) {
+        let tasks: ITaskInstance[];
+        const taskFilter = this.filterTasks(task, otherParams);
+        const queryParamsToDB: any = {
+            subQuery: false,
+            order: [["createdAt", "DESC"]],
+            where: {
+                ...taskFilter,
+            },
+            include: [
+                {
+                    model: UsersTasks,
+                    attributes: [],
+                },
+                {
+                    model: Category,
+                    attributes: ["name"],
+                },
+                {
+                    model: User,
+                    attributes: [],
+                },
+            ],
+            attributes: {
+                include: [
+                    [sequelize.fn("COUNT", sequelize.col("UsersTasks.userId")), "numberSubscribedPeople"],
+                    [sequelize.fn("concat", sequelize.col("User.firstname"), " ", sequelize.col("User.lastname")), "firstLastName"],
+                ],
+            },
+            group: ["Task.id"],
+        };
+        if (otherParams.offset) {
+            queryParamsToDB.offset = parseInt(otherParams.offset, 10);
+        }
+        if (otherParams.limit) {
+            queryParamsToDB.limit = parseInt(otherParams.limit, 10);
+        }
+
+        tasks = await Task.findAll(queryParamsToDB);
+        return tasks;
+    }
+    
 
     public async getOnReviewTasksOfManager(userId, arrayCategoryIdFromGet) {
         const arrayOfCategoryId = await this.getArrayOfCategoryIdOfManager(userId);
@@ -269,6 +296,36 @@ class TaskService {
 
         const arrayOfCategortId = categoriesOfManager.map((el) => el.dataValues.categoryId);
         return arrayOfCategortId;
+    }
+
+    public filterTasks(task, otherParams) {
+        let arrayCategoryIdFromGet: number[] = [];
+        if (task.title) {
+            task.title = {
+                [Op.like]: (`%${task.title}%`),
+            };
+        }
+        if (otherParams.dateStart && otherParams.dateEnd) {
+            const dateS = new Date(otherParams.dateStart);
+            const dateE = new Date(otherParams.dateEnd);
+            task.date = {
+                [Op.between]: [dateS, dateE],
+            };
+        }
+
+        if (task.categoryId) {
+            if (Array.isArray(task.categoryId)) {
+                arrayCategoryIdFromGet = task.categoryId.map((el) => parseInt(el, 10));
+            } else {
+                arrayCategoryIdFromGet.push(parseInt(task.categoryId, 10));
+            }
+            task.categoryId = {
+                [sequelize.Op.in]: arrayCategoryIdFromGet,
+            };
+        }
+
+        return task;
+
     }
 
 }
