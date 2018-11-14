@@ -7,7 +7,7 @@ export const permit = (...allowed) => {
         if (isAllowed(req.roleId)) {
             next();
         } else {
-            global.logger.info(`User is not manager or admin`);
+            global.logger.info(`User doesn't have permission.`);
             res.status(403).send("You doesn't have permission.").end();
         }
     };
