@@ -119,9 +119,10 @@ class TaskController {
 
     }
 
-    public async getStatistic(req, res) {
-        const categoryId = req.query;
-        const result =  await taskService.getTasksStatistics(categoryId);
+    public async getCategoriesStatistic(req, res) {
+        const params = req.query;
+        const result = await taskService.getTasksStatistics(params);
+
         res.status(200).send(result);
     }
 }
