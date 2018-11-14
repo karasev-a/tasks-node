@@ -80,15 +80,24 @@ class TaskService {
         return tasks;
     }
 
-    public async getAllTasksForAdmin(task, otherParams) {
+    public async getAllTasksForAdmin(task, otherParams, userIdParam) {
         let tasks: ITaskInstance[];
         const taskFilter = this.filterTasks(task, otherParams);
+        let whereParams;
+        taskFilter.userId
+        ? whereParams = {
+            ...taskFilter,
+        }
+        : whereParams = {
+            ...taskFilter,
+                userId: {
+                    [sequelize.Op.ne]: userIdParam,
+                },
+        };
         const queryParamsToDB: any = {
             subQuery: false,
             order: [["createdAt", "DESC"]],
-            where: {
-                ...taskFilter,
-            },
+            where: whereParams,
             include: [
                 {
                     model: UsersTasks,
@@ -132,8 +141,6 @@ class TaskService {
         const user = await User.findById(userId);
         let result: number[];
         let whereParams;
-        
-
         if (user.dataValues.roleId === Roles.manager) {
             if (arrayCategoryIdFromGetForFilter && arrayCategoryIdFromGetForFilter.length > 0) {
                 result = arrayCategoryIdFromGetForFilter;
@@ -324,6 +331,7 @@ class TaskService {
 
     public filterTasks(task, otherParams) {
         let arrayCategoryIdFromGet: number[] = [];
+        let arrayUserIdFromGet: number[] = [];
         if (task.title) {
             task.title = {
                 [Op.like]: (`%${task.title}%`),
@@ -343,6 +351,15 @@ class TaskService {
                 : arrayCategoryIdFromGet.push(parseInt(task.categoryId, 10));
             task.categoryId = {
                 [sequelize.Op.in]: arrayCategoryIdFromGet,
+            };
+        }
+
+        if (task.userId) {
+            Array.isArray(task.userId)
+                ? arrayUserIdFromGet = task.userId.map((el) => parseInt(el, 10))
+                : arrayUserIdFromGet.push(parseInt(task.userId, 10));
+            task.userId = {
+                [sequelize.Op.in]: arrayUserIdFromGet,
             };
         }
 

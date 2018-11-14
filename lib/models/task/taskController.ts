@@ -113,7 +113,7 @@ class TaskController {
         const userId = parseInt(req.userId, 10);
         let result;
 
-        result = await taskService.getAllTasksForAdmin(task, otherParams);
+        result = await taskService.getAllTasksForAdmin(task, otherParams, req.userId);
         res.status(200).send(result);
         global.logger.info(`Admin get all task`);
     }
