@@ -13,7 +13,7 @@ router.use("/", loginRouter);
 
 router.use("/tasks", isLogin, taskRouter);
 router.use("/users", isLogin, userRouter);
-router.use("/categories", categoryRouter);
+router.use("/categories", isLogin, categoryRouter);
 router.use("/roles", roleRouter);
 
 export default router;

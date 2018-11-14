@@ -1,13 +1,16 @@
 import { Router } from "express";
 
 import categoryController from "../categoryController";
+import {handleErrorAsync} from "../../../middleware/handleErrorAsync";
+import {checkAdmin, checkManagerOrAdmin} from "../../../middleware/check-role.midleware";
 
 const router: Router = Router();
 
-router.get("/:categoryId", categoryController.getOneCategory);
-router.delete("/:categoryController", categoryController.deleteCategory);
-router.put("/categoryController", categoryController.updateCategory);
-router.post("/", categoryController.createNewCategory);
-router.get("/", categoryController.getAllCategories);
+router.get("/managerTasks", checkManagerOrAdmin, handleErrorAsync(categoryController.getCategoriesOnReview));
+router.get("/:categoryId", handleErrorAsync(categoryController.getOneCategory));
+router.delete("/:categoryController", handleErrorAsync(categoryController.deleteCategory));
+router.put("/categoryController", handleErrorAsync(categoryController.updateCategory));
+router.post("/", handleErrorAsync(categoryController.createNewCategory));
+router.get("/", handleErrorAsync(categoryController.getAllCategories));
 
 export default router;
