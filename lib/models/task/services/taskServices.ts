@@ -80,7 +80,7 @@ class TaskService {
         return tasks;
     }
 
-    public async getAllTasksForAdmin(task, otherParams, userIdParam) {
+    public async getAllTasksWithoutOwner(task, otherParams, userIdParam) {
         let tasks: ITaskInstance[];
         const taskFilter = this.filterTasks(task, otherParams);
         let whereParams;
