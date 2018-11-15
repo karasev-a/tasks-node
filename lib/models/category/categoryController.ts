@@ -47,6 +47,9 @@ class CategoryController {
         res.status(200).send(result);
         global.logger.info(`Categories is on review`);
     }
+    // public async getCategoriesStatistic() {
+
+    // }
 }
 
 export default new CategoryController();
