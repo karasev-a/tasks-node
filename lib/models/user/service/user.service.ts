@@ -3,6 +3,7 @@ import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
 import * as sequelize from "sequelize";
 import { OrngError } from "../../../tools/error";
+import { Task } from "../../task/task";
 
 class UserService {
 
@@ -19,6 +20,66 @@ class UserService {
                     [sequelize.Op.ne]: userId,
                 },
             },
+        });
+    }
+
+    public async getAllForAdminStatistic(userId) {
+        // ----- count all tasks of user-------
+        // return User.findAll({
+        //     where: {
+        //         id: {
+        //             [sequelize.Op.ne]: userId,
+        //         },
+        //     },
+        //     include: [
+        //         {
+        //             model: Task,
+        //             attributes: [],
+        //         },
+        //     ],
+        //     attributes: {
+        //         include: [
+        //             [
+        //                 sequelize.fn("COUNT", sequelize.col("Tasks.id")),
+        //                 "countTasks",
+        //             ],
+        //         ],
+
+        //     },
+        //     group: ["User.id"],
+        // });
+        //  ----- count all tasks of user------- END---
+
+
+        // ----- count tasks by status---
+        // return Task.findAll({
+        //     attributes: [
+        //         "status",
+        //         [sequelize.fn("COUNT", sequelize.col("Task.id")), "countTasks"],
+
+        //     ],
+        //     group: ["Task.status"],
+        // });
+        // ----- count tasks by status---END---
+
+
+        return User.findAll({
+            where: {
+                id: {
+                    [sequelize.Op.ne]: userId,
+                },
+            },
+            include: [
+                {
+                    model: Task,
+                    attributes: [
+                        "status",
+                        [sequelize.fn("COUNT", sequelize.col("id")), "countTasks"],
+                    ],
+                },
+            ],
+           
+            group: ["User.id"],
         });
     }
 
@@ -100,7 +161,7 @@ class UserService {
     // provide token wit id and roleId
     public async auth(user) {
         const obj = { "roleId": user.roleId, "userId": user.id };
-        return jwt.sign( obj, "secret", { expiresIn: "1h" }); // #TODO: add real secreat key
+        return jwt.sign(obj, "secret", { expiresIn: "1h" }); // #TODO: add real secreat key
     }
 
     // check token
