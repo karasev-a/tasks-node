@@ -4,6 +4,7 @@ import loggers from "tools/loggers";
 import { UsersTasks } from "../../users-tasks/usersTasks";
 import { UsersCategories } from "../../users-categories/usersCategories";
 import { Category } from "../../category/category";
+import { all } from "bluebird";
 
 const Op = sequelize.Op;
 
@@ -241,12 +242,12 @@ class TaskService {
         return arrayOfCategortId;
     }
 
-    public async getTasksStatistics(params) {
+    public async getTasksStatistics() {
         const OpenTasks: any = {
             where: {
                 status: Statuses.Open,
             },
-            attributes: [[sequelize.fn("COUNT", sequelize.col("Task.id")), "open"]],
+            attributes: [[sequelize.fn("COUNT", sequelize.col("Task.id")), "open"], ["categoryId", "categoryId"]],
             include: [{
                 model: Category,
                 attributes: ["name"],
@@ -255,7 +256,7 @@ class TaskService {
         };
         const allTasks: any = {
             where: all,
-            attributes: [[sequelize.fn("COUNT", sequelize.col("Task.id")), "all"]],
+            attributes: [[sequelize.fn("COUNT", sequelize.col("Task.id")), "all"], ["categoryId", "categoryId"]],
             include: [{
                 model: Category,
                 attributes: ["name"],
@@ -267,6 +268,7 @@ class TaskService {
         const opened = (await Task.findAll(OpenTasks) as any).map( (el) => el.dataValues);
         const allTasksResult = (await Task.findAll(allTasks) as any).map( (el) => el.dataValues);
 
+        // Kludge for combaine result
         let tasks = opened.map( (el) => {
             const sameCat = allTasksResult.filter( (it, index) => {
                 if (it.Category.name === el.Category.name) {
@@ -281,19 +283,7 @@ class TaskService {
         });
         tasks = tasks.concat(allTasksResult);
 
-        // Kludge for parsing result
-        // let tmp = {};
-        // opened.forEach( (element, index) => {
-        //     if ( opened[index].dataValues["Category"].name !== allTasksResult[index].dataValues["Category"].name) {
-        //         Object.assign(tmp, allTasksResult[index], opened[index]);
-        //         console.log(tmp);
-        //         // allTasksResult[index].pop();
-        //     }
-        // });
-        // console.log(Object.assign(tmp, allTasksResult));
-        let merged = Object.assign({}, opened, allTasksResult);
-
-        return Object.assign({}, opened, allTasksResult);
+        return tasks;
     }
 
 }

@@ -95,7 +95,6 @@ class TaskController {
             res.status(400).end();
             global.logger.error({ message: `User do not subscribed to task` });
         }
-
     }
 
     public async getAllTasksOfUser(req, res) {
@@ -107,6 +106,7 @@ class TaskController {
         res.status(200).send(result);
         global.logger.info(JSON.stringify(result));
     }
+
     public async getOnReviewTasksOfManager(req, res) {
         const result = await taskService.getOnReviewTasksOfManager(req.userId);
         if (result.length > 0) {
@@ -120,9 +120,7 @@ class TaskController {
     }
 
     public async getCategoriesStatistic(req, res) {
-        const params = req.query;
-        const result = await taskService.getTasksStatistics(params);
-
+        const result = await taskService.getTasksStatistics();
         res.status(200).send(result);
     }
 }
