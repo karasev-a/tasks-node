@@ -63,24 +63,24 @@ class UserService {
         // ----- count tasks by status---END---
 
 
-        return User.findAll({
-            where: {
-                id: {
-                    [sequelize.Op.ne]: userId,
-                },
-            },
-            include: [
-                {
-                    model: Task,
-                    attributes: [
-                        "status",
-                        [sequelize.fn("COUNT", sequelize.col("id")), "countTasks"],
-                    ],
-                },
-            ],
+        // return User.findAll({
+        //     where: {g
+        //         id: {
+        //             [sequelize.Op.ne]: userId,
+        //         },
+        //     },
+        //     include: [
+        //         {
+        //             model: Task,
+        //             attributes: [
+        //                 "status",
+        //                 [sequelize.fn("COUNT", sequelize.col("id")), "countTasks"],
+        //             ],
+        //         },
+        //     ],
            
-            group: ["User.id"],
-        });
+        //     group: ["User.id"],
+        // });
     }
 
     // by id
