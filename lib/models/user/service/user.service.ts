@@ -1,6 +1,7 @@
 import { User, IUserAttributes } from "../user";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
+import * as sequelize from "sequelize";
 import { OrngError } from "../../../tools/error";
 
 class UserService {
@@ -8,6 +9,16 @@ class UserService {
     // all
     public async getAll() {
         return User.findAll({
+        });
+    }
+
+    public async getAllWithoutLoginUser(userId) {
+        return User.findAll({
+            where: {
+                id: {
+                    [sequelize.Op.ne]: userId,
+                },
+            },
         });
     }
 
