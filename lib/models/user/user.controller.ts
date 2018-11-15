@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response, Router } from "express";
 import UserService from "./service/user.service";
+import { IUserAttributes } from "./user";
 
 class UserController {
-    // all
-    public async getAll(req: Request, res: Response, next: NextFunction) {
-        res.status(200).send(await UserService.getAll());
+    // get all
+    public async getAll(req, res: Response, next: NextFunction) {
+            res.status(200).send(await UserService.getAll());
     }
 
     public async getAllWithoutLoginUser(req, res) {
@@ -17,6 +18,9 @@ class UserController {
         const userId = parseInt(req.params.userId, 10);
         const user = await UserService.getById(userId);
         user ? res.status(200).send(user) : res.sendStatus(404);
+    }
+    public async getProfileData(req, res: Response, next: NextFunction) {
+        res.status(200).send(await UserService.getById(parseInt(req.userId, 10)));
     }
 
     // delete
@@ -40,9 +44,27 @@ class UserController {
     }
 
      // Put
-     public async update(req: Request, res: Response, next: NextFunction) {
-        const userId = parseInt(req.params.userId, 10);
+     public async update(req, res: Response, next: NextFunction) {
+        let userId;
         const model = req.body;
+        // check is it have id in parametr it is meaning that it is admin
+        if (req.params.userId) {
+            userId = req.params.userId;
+        } else { // this is just user, trying update profile
+            userId = parseInt(req.userId, 10);
+            // check if it try to change password
+            if (model.oldPswd) {
+                const currentUSer = await UserService.getById(userId);
+                // password equal
+                if (UserService.isSamePassword(model.oldPswd, currentUSer.dataValues.password)) {
+                    model.password = UserService.bcryptPassword(model.newPswd);
+                    delete model.oldPswd;
+                    delete model.newPswd;
+                } else {
+                    res.status(400).send("old password wrong").end();
+                }
+            }
+        }
         res.status(200).send(await UserService.update(userId, model));
     }
 }

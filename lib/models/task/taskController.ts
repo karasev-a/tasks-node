@@ -93,7 +93,6 @@ class TaskController {
             res.status(400).end();
             global.logger.error({ message: `User do not subscribed to task` });
         }
-
     }
 
     public async getAllTasksOfUser(req, res) {
@@ -137,6 +136,10 @@ class TaskController {
 
     }
 
+    public async getCategoriesStatistic(req, res) {
+        const result = await taskService.getTasksStatistics();
+        res.status(200).send(result);
+    }
 }
 
 export default new TaskController();

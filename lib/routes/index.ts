@@ -13,6 +13,7 @@ router.post("/users/create", UserController.create);
 
 router.use("/", loginRouter);
 
+router.use("/users", isLogin, userRouter);
 router.use("/tasks", isLogin, taskRouter);
 router.use("/users", isLogin, userRouter);
 router.use("/categories", isLogin, categoryRouter);
