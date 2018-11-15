@@ -6,9 +6,11 @@ import categoryRouter from "../models/category/routes/categoryRouter";
 import userRouter from "../models/user/routes/userRouter";
 import loginRouter from "./loginRouter";
 import { isLogin } from "../middleware/isLogin";
+import UserController from "../models/user/user.controller";
 
 const router = express.Router();
-router.use("/users", userRouter);
+router.post("/users/create", UserController.create);
+
 router.use("/", loginRouter);
 
 router.use("/tasks", isLogin, taskRouter);

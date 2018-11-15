@@ -106,14 +106,14 @@ class TaskController {
         global.logger.info(JSON.stringify(result));
     }
 
-    public async getAllTasksForAdmin(req, res) {
+    public async getAllTasksWithoutOwner(req, res) {
         const paramsOfGet = taskService.getTaskAndParamsFromGetQuery(req.query);
         const task: ITaskAttributes = paramsOfGet.task;
         const otherParams = paramsOfGet.otherParams;
         const userId = parseInt(req.userId, 10);
         let result;
 
-        result = await taskService.getAllTasksForAdmin(task, otherParams);
+        result = await taskService.getAllTasksWithoutOwner(task, otherParams, req.userId);
         res.status(200).send(result);
         global.logger.info(`Admin get all task`);
     }

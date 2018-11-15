@@ -7,6 +7,11 @@ class UserController {
         res.status(200).send(await UserService.getAll());
     }
 
+    public async getAllWithoutLoginUser(req, res) {
+        const result = await UserService.getAllWithoutLoginUser(req.userId);
+        res.status(200).send(result);
+    }
+
     // by Id
     public async getById(req: Request, res: Response, next: NextFunction) {
         const userId = parseInt(req.params.userId, 10);
