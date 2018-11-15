@@ -59,12 +59,12 @@ export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
     type: Sequelize.DATE,
     validate: {
       isDate: true,
-      equalOrMoreToday(date) {
-        const curDate = new Date();
-        if (date < curDate ) {
-          throw new Error("date must be current date or more");
-        }
-      },
+      // equalOrMoreToday(date) {
+      //   const curDate = new Date();
+      //   if (date < curDate ) {
+      //     throw new Error("date must be current date or more");
+      //   }
+      // },
     },
   },
   status: {
