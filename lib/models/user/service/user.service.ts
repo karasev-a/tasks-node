@@ -4,6 +4,7 @@ import * as bcrypt from "bcrypt";
 import * as sequelize from "sequelize";
 import { OrngError } from "../../../tools/error";
 import { Task } from "../../task/task";
+import { Role } from "../../role/role";
 
 class UserService {
 
@@ -23,64 +24,25 @@ class UserService {
         });
     }
 
-    public async getAllForAdminStatistic(userId) {
-        // ----- count all tasks of user-------
-        // return User.findAll({
-        //     where: {
-        //         id: {
-        //             [sequelize.Op.ne]: userId,
-        //         },
-        //     },
-        //     include: [
-        //         {
-        //             model: Task,
-        //             attributes: [],
-        //         },
-        //     ],
-        //     attributes: {
-        //         include: [
-        //             [
-        //                 sequelize.fn("COUNT", sequelize.col("Tasks.id")),
-        //                 "countTasks",
-        //             ],
-        //         ],
+    public async getAllWithStatistic(userId) {
 
-        //     },
-        //     group: ["User.id"],
-        // });
-        //  ----- count all tasks of user------- END---
-
-
-        // ----- count tasks by status---
-        // return Task.findAll({
-        //     attributes: [
-        //         "status",
-        //         [sequelize.fn("COUNT", sequelize.col("Task.id")), "countTasks"],
-
-        //     ],
-        //     group: ["Task.status"],
-        // });
-        // ----- count tasks by status---END---
-
-
-        // return User.findAll({
-        //     where: {g
-        //         id: {
-        //             [sequelize.Op.ne]: userId,
-        //         },
-        //     },
-        //     include: [
-        //         {
-        //             model: Task,
-        //             attributes: [
-        //                 "status",
-        //                 [sequelize.fn("COUNT", sequelize.col("id")), "countTasks"],
-        //             ],
-        //         },
-        //     ],
-           
-        //     group: ["User.id"],
-        // });
+        return User.findAll({
+            where: {
+                id: {
+                    [sequelize.Op.ne]: userId,
+                },
+            },
+            include: [
+                {
+                    model: Task,
+                    attributes: [
+                        "status",
+                        [sequelize.fn("COUNT", sequelize.col("title")), "countTasks"],
+                    ],
+                },
+            ],
+            group: ["User.id", "Tasks.status"],
+        });
     }
 
     // by id

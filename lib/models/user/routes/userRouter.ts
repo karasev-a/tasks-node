@@ -4,7 +4,7 @@ import UserController from "../user.controller";
 
 const router: Router = Router();
 
-router.get("/admin/statistic", UserController.getAllForAdminStatistic);
+router.get("/admin/statistic", UserController.getAllWithStatistic);
 router.get("/admin", UserController.getAllForAdmin);
 router.get("/:userId", UserController.getById);
 router.delete("/:userId", UserController.delete);

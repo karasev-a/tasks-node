@@ -46,8 +46,8 @@ class UserController {
         res.status(200).send(await UserService.update(userId, model));
     }
 
-    public async getAllForAdminStatistic(req, res) {
-        const result = await UserService.getAllForAdminStatistic(req.userId);
+    public async getAllWithStatistic(req, res) {
+        const result = await UserService.getAllWithStatistic(req.userId);
         res.status(200).send(result);
     }
 }
