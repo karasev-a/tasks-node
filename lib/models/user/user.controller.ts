@@ -14,6 +14,9 @@ class UserController {
         const user = await UserService.getById(userId);
         user ? res.status(200).send(user) : res.sendStatus(404);
     }
+    public async getProfileData(req, res: Response, next: NextFunction) {
+        res.status(200).send(await UserService.getById(parseInt(req.userId, 10)));
+    }
 
     // delete
     public async delete(req: Request, res: Response, next: NextFunction) {
