@@ -7,8 +7,8 @@ class UserController {
         res.status(200).send(await UserService.getAll());
     }
 
-    public async getAllForAdmin(req, res) {
-        const result = await UserService.getAllForAdmin(req.userId);
+    public async getAllWithoutLoginUser(req, res) {
+        const result = await UserService.getAllWithoutLoginUser(req.userId);
         res.status(200).send(result);
     }
 

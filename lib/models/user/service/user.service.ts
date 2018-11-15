@@ -12,7 +12,7 @@ class UserService {
         });
     }
 
-    public async getAllForAdmin(userId) {
+    public async getAllWithoutLoginUser(userId) {
         return User.findAll({
             where: {
                 id: {
