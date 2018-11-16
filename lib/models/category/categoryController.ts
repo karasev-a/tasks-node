@@ -2,6 +2,7 @@ import categoryService from "./services/categoryServices";
 import loggers from "../../tools/loggers";
 import { ICategoryAttributes, ICategoryInstance } from "./category";
 import { Roles } from "../task/task";
+import categoryServices from "./services/categoryServices";
 class CategoryController {
     public async getAllCategories(req, res) {
         const result = await categoryService.getAllCategories();
@@ -47,9 +48,11 @@ class CategoryController {
         res.status(200).send(result);
         global.logger.info(`Categories is on review`);
     }
-    // public async getCategoriesStatistic() {
 
-    // }
+    public async getCategoriesStatistic(req, res) {
+        const result = await categoryServices.getCategoryStatistics();
+        res.status(200).send(result);
+    }
 }
 
 export default new CategoryController();

@@ -99,7 +99,7 @@ class UserService {
     // provide token wit id and roleId
     public async auth(user) {
         const obj = { "roleId": user.roleId, "userId": user.id };
-        return jwt.sign( obj, "secret", { expiresIn: "1h" }); // #TODO: add real secreat key
+        return jwt.sign( obj, "secret", { expiresIn: "12h" }); // #TODO: add real secreat key
     }
 
     // check token
