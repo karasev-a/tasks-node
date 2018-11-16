@@ -49,7 +49,7 @@ class UserController {
         const model = req.body;
         // check is it have id in parametr it is meaning that it is admin
         if (req.params.userId) {
-            userId = req.params.userId;
+            userId = parseInt(req.params.userId, 10);
         } else { // this is just user, trying update profile
             userId = parseInt(req.userId, 10);
             // check if it try to change password
