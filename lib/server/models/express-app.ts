@@ -41,7 +41,6 @@ class App {
         return;
       } else {
         res.setHeader("Access-Control-Allow-Credentials", "true");
-        res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
         next();
       }
     });

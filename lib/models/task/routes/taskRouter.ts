@@ -11,9 +11,10 @@ import { Roles } from "../task";
 const router: Router = Router();
 
 router.get("/", handleErrorAsync(taskController.getAllTasks));
+
 router.post("/:taskId/subscription", handleErrorAsync(taskController.subscribeToTask));
 router.get("/myTasks", handleErrorAsync(taskController.getAllTasksOfUser));
-router.get("/admintasks", permit(Roles.admin), handleErrorAsync(taskController.getAllTasksForAdmin));
+router.get("/admintasks", permit(Roles.admin), handleErrorAsync(taskController.getAllTasksWithoutOwner));
 router.get("/managerTasks",  permit(Roles.admin, Roles.manager), handleErrorAsync(taskController.getOnReviewTasks));
 router.get("/:taskId", handleErrorAsync(taskController.getOneTask));
 router.delete("/:taskId", handleErrorAsync(taskController.deleteTask));

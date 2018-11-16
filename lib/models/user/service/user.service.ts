@@ -14,7 +14,7 @@ class UserService {
         });
     }
 
-    public async getAllForAdmin(userId) {
+    public async getAllWithoutLoginUser(userId) {
         return User.findAll({
             where: {
                 id: {
@@ -81,7 +81,6 @@ class UserService {
     // Put
     public async update(userId, model) {
         if (model && Number.isInteger(userId)) {
-            // #TODO: add bcrypt before update password;
             delete model[userId];
             const result = await User.update(model, { where: { id: userId } });
             return !!result[0];
@@ -136,7 +135,7 @@ class UserService {
     }
 
     // before create bcrypt password
-    private bcryptPassword(password) {
+    public bcryptPassword(password) {
         const mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|"
             + "((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
         if (!mediumRegex.test(password)) {
@@ -148,7 +147,7 @@ class UserService {
     }
 
     // compare password
-    private isSamePassword(password, hash) {
+    public isSamePassword(password, hash) {
         return bcrypt.compareSync(password, hash);
     }
 
