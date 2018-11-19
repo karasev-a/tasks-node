@@ -3,8 +3,9 @@ import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
 import * as sequelize from "sequelize";
 import { OrngError } from "../../../tools/error";
-import { Task } from "../../task/task";
+import { Task, Statuses } from "../../task/task";
 import { Role } from "../../role/role";
+import { any } from "joi";
 
 class UserService {
 
@@ -25,8 +26,7 @@ class UserService {
     }
 
     public async getAllWithStatistic(userId) {
-
-        return User.findAll({
+        const users =  User.findAll({
             where: {
                 id: {
                     [sequelize.Op.ne]: userId,
@@ -41,8 +41,20 @@ class UserService {
                     ],
                 },
             ],
-            group: ["User.id", "Tasks.status"],
+
+            group: ["User.id",  "Tasks.status"],
+
         });
+
+        // users.map( (user) => {
+        //     let countAllTasks = 0;
+        //     user.["Tasks"].map( (el) => {
+        //         countAllTasks = countAllTasks + el.countTasks;
+        //     });
+        //     user.["allTasks"] = countAllTasks;
+        //     countAllTasks = 0;
+        // });
+        return users;
     }
 
     // by id
