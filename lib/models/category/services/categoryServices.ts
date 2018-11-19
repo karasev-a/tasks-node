@@ -72,50 +72,26 @@ class TaskService {
         const allTasks: any = {
             attributes: ["name", "id",
                 [sequelize.fn("COUNT", sequelize.col("Tasks.id")), "all"],
-                // [sequelize.fn("COUNT", sequelize.literal("where Tasks.status = 1")), "open"],
             ],
             include: [
                 {
                     model: Task,
-                    // attributes: ["categoryId",
-                    //     [sequelize.fn("COUNT", sequelize.col("Tasks.id")), "all"],
-                    // ],
                     attributes: [],
                 },
-                // {
-                //     model: Task, as: "openTasks",
-                //     where: {
-                //         status: Statuses.Open,
-                //     },
-                //     attributes: ["categoryId",
-                //         [sequelize.fn("COUNT", sequelize.col("openTasks.id")), "open"],
-                //     ],
-                // },
             ],
             group: ["Category.id"],
         };
         const openTasks: any = {
             attributes: ["name", "id",
                 [sequelize.fn("COUNT", sequelize.col("Tasks.id")), "open"],
-                // [sequelize.literal("COUNT(Tasks.id) WHERE Tasks.status=1 "), "open"],
             ],
             include: [
-                // {
-                //     model: Task,
-                //     // attributes: ["categoryId",
-                //     //     [sequelize.fn("COUNT", sequelize.col("Tasks.id")), "all"],
-                //     // ],
-                //     attributes: [],
-                //     // having: {status: Statuses.Open},
-                // },
                 {
                     model: Task,
                     where: {
                         status: Statuses.Open,
                     },
                     attributes: [
-                        // "categoryId",
-                        // [sequelize.fn("COUNT", sequelize.col("openTasks.id")), "open"],
                     ],
                 },
             ],
@@ -125,7 +101,7 @@ class TaskService {
         const tasksA = await Category.findAll(allTasks).map( (el) => el.dataValues) as any;
         const tasksO = await Category.findAll(openTasks).map( (el) => el.dataValues) as any;
         // Kludge for combaine result
-        let tasks = tasksO.map( (el) => {
+        const tasks = tasksO.map( (el) => {
             const sameCat = tasksA.filter( (it, index) => {
                 if (it.name === el.name) {
                     tasksA.splice(index, 1);
@@ -138,7 +114,6 @@ class TaskService {
             return el;
         });
         tasksA.map( (el) => el.open = 0);
-        // tasks = tasks.concat(tasksA);
 
         return tasks.concat(tasksA);
     }

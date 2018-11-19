@@ -330,50 +330,6 @@ class TaskService {
         return arrayOfCategortId;
     }
 
-    public async getTasksStatistics() {
-        const OpenTasks: any = {
-            where: {
-                status: Statuses.Open,
-            },
-            attributes: [[sequelize.fn("COUNT", sequelize.col("Task.id")), "open"], ["categoryId", "categoryId"]],
-            include: [{
-                model: Category,
-                attributes: ["name"],
-            }],
-            group: ["Task.categoryId"],
-        };
-        const allTasks: any = {
-            where: all,
-            attributes: [[sequelize.fn("COUNT", sequelize.col("Task.id")), "all"], ["categoryId", "categoryId"]],
-            include: [{
-                model: Category,
-                attributes: ["name"],
-            }],
-            group: ["Task.categoryId"],
-        };
-
-        // const result = await Task.scope([allTasks, allOpen]).findAll();
-        const opened = (await Task.findAll(OpenTasks) as any).map( (el) => el.dataValues);
-        const allTasksResult = (await Task.findAll(allTasks) as any).map( (el) => el.dataValues);
-
-        // Kludge for combaine result
-        let tasks = opened.map( (el) => {
-            const sameCat = allTasksResult.filter( (it, index) => {
-                if (it.Category.name === el.Category.name) {
-                    allTasksResult.splice(index, 1);
-                    return true;
-                } else {
-                    return false;
-                }
-            });
-            el.all = sameCat[0].all;
-            return el;
-        });
-        tasks = tasks.concat(allTasksResult);
-
-        return tasks;
-    }
-
     public filterTasks(task, otherParams) {
         let arrayCategoryIdFromGet: number[] = [];
         let arrayUserIdFromGet: number[] = [];
