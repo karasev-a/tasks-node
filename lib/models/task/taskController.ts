@@ -135,11 +135,6 @@ class TaskController {
         }
 
     }
-
-    public async getCategoriesStatistic(req, res) {
-        const result = await taskService.getTasksStatistics();
-        res.status(200).send(result);
-    }
 }
 
 export default new TaskController();

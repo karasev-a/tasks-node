@@ -12,6 +12,7 @@ const handleErrorAsync = (func) => async (req, res, next) => {
   };
 
 router.get("/admin", UserController.getAllWithoutLoginUser);
+router.get("/profile", UserController.getProfileData);
 router.get("/:userId", UserController.getById);
 router.delete("/:userId", UserController.delete);
 router.put("/:userId", UserController.update); // for admin
