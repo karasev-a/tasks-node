@@ -1,18 +1,13 @@
 import { Router } from "express";
+import {handleErrorAsync} from "../../../middleware/handleErrorAsync";
+import { Roles } from "../../task/task";
+import {permit} from "../../../middleware/check-role.midleware";
 
 import UserController from "../user.controller";
 
 const router: Router = Router();
-const handleErrorAsync = (func) => async (req, res, next) => {
-    try {
-      await func(req, res, next);
-    } catch (error) {
-      next(error);
-    }
-  };
 
-router.get("/admin/statistic", UserController.getAllWithStatistic);
-router.get("/admin", UserController.getAllWithoutLoginUser);
+router.get("/admin/statistic", permit(Roles.admin), handleErrorAsync(UserController.getAllWithStatistic));
 router.get("/profile", UserController.getProfileData);
 router.get("/:userId", UserController.getById);
 router.delete("/:userId", UserController.delete);

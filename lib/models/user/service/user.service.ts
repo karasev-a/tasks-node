@@ -13,19 +13,9 @@ class UserService {
         });
     }
 
-    public async getAllWithoutLoginUser(userId) {
-        return User.findAll({
-            where: {
-                id: {
-                    [sequelize.Op.ne]: userId,
-                },
-            },
-        });
-    }
-
     public async getAllWithStatistic(userId) {
 
-        const users = User.findAll({
+        const users = await User.findAll({
             attributes: {
                 include: [
                     [sequelize.fn("COUNT", sequelize.col("title")), "allTasks"],
