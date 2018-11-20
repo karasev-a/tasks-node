@@ -3,6 +3,7 @@ import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
 import * as sequelize from "sequelize";
 import { OrngError } from "../../../tools/error";
+import { Task, Statuses } from "../../task/task";
 
 class UserService {
 
@@ -12,14 +13,57 @@ class UserService {
         });
     }
 
-    public async getAllWithoutLoginUser(userId) {
-        return User.findAll({
+    public async getAllWithStatistic(userId) {
+
+        const users = await User.findAll({
+            attributes: {
+                include: [
+                    [sequelize.fn("COUNT", sequelize.col("title")), "allTasks"],
+                    [
+                        sequelize.literal("(SELECT COUNT(`title`) FROM `Tasks` " +
+                            "WHERE `status` = 1 and `User`.`id` = `Tasks`.`userId` )"),
+                        "onReview",
+                    ],
+                    [
+                        sequelize.literal("(SELECT COUNT(`title`) FROM `Tasks` " +
+                            "WHERE `status` = 2 and `User`.`id` = `Tasks`.`userId` )"),
+                        "open",
+                    ],
+                    [
+                        sequelize.literal("(SELECT COUNT(`title`) FROM `Tasks` " +
+                            "WHERE `status` = 3 and `User`.`id` = `Tasks`.`userId` )"),
+                        "pending",
+                    ],
+                    [
+                        sequelize.literal("(SELECT COUNT(`title`) FROM `Tasks` " +
+                            " WHERE `status` = 4 and `User`.`id` = `Tasks`.`userId` )"),
+                        "done",
+                    ],
+                    [
+                        sequelize.literal("(SELECT COUNT(`title`) FROM `Tasks` " +
+                            "WHERE `status` = 5 and `User`.`id` = `Tasks`.`userId` )"),
+                        "decline",
+                    ],
+                ],
+            },
             where: {
                 id: {
                     [sequelize.Op.ne]: userId,
                 },
             },
+            include: [
+                {
+                    model: Task,
+                    attributes: [
+                    ],
+                },
+            ],
+
+            group: ["User.id"],
+
         });
+
+        return users;
     }
 
     // by id

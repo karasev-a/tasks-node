@@ -13,6 +13,7 @@ export interface IUserAttributes {
   roleId?: number;
   createdAt?: Date;
   updatedAt?: Date;
+  allTasks?: number;
 }
 
 export interface IUserInstance extends Sequelize.Instance<IUserAttributes> {

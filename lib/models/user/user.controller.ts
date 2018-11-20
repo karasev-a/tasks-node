@@ -8,11 +8,6 @@ class UserController {
             res.status(200).send(await UserService.getAll());
     }
 
-    public async getAllWithoutLoginUser(req, res) {
-        const result = await UserService.getAllWithoutLoginUser(req.userId);
-        res.status(200).send(result);
-    }
-
     // by Id
     public async getById(req: Request, res: Response, next: NextFunction) {
         const userId = parseInt(req.params.userId, 10);
@@ -49,7 +44,7 @@ class UserController {
         const model = req.body;
         // check is it have id in parametr it is meaning that it is admin
         if (req.params.userId) {
-            userId = req.params.userId;
+            userId = parseInt(req.params.userId, 10);
         } else { // this is just user, trying update profile
             userId = parseInt(req.userId, 10);
             // check if it try to change password
@@ -66,6 +61,11 @@ class UserController {
             }
         }
         res.status(200).send(await UserService.update(userId, model));
+    }
+
+    public async getAllWithStatistic(req, res) {
+        const result = await UserService.getAllWithStatistic(req.userId);
+        res.status(200).send(result);
     }
 }
 
