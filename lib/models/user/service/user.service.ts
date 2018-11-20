@@ -26,7 +26,38 @@ class UserService {
     }
 
     public async getAllWithStatistic(userId) {
-        const users =  User.findAll({
+
+        const users = User.findAll({
+            attributes: {
+                include: [
+                    [sequelize.fn("COUNT", sequelize.col("title")), "allTasks"],
+                    [
+                        sequelize.literal("(SELECT COUNT(`title`) FROM `Tasks` " +
+                            "WHERE `status` = 1 and `User`.`id` = `Tasks`.`userId` )"),
+                        "onReview",
+                    ],
+                    [
+                        sequelize.literal("(SELECT COUNT(`title`) FROM `Tasks` " +
+                            "WHERE `status` = 2 and `User`.`id` = `Tasks`.`userId` )"),
+                        "open",
+                    ],
+                    [
+                        sequelize.literal("(SELECT COUNT(`title`) FROM `Tasks` " +
+                            "WHERE `status` = 3 and `User`.`id` = `Tasks`.`userId` )"),
+                        "pending",
+                    ],
+                    [
+                        sequelize.literal("(SELECT COUNT(`title`) FROM `Tasks` " +
+                            " WHERE `status` = 4 and `User`.`id` = `Tasks`.`userId` )"),
+                        "done",
+                    ],
+                    [
+                        sequelize.literal("(SELECT COUNT(`title`) FROM `Tasks` " +
+                            "WHERE `status` = 5 and `User`.`id` = `Tasks`.`userId` )"),
+                        "decline",
+                    ],
+                ],
+            },
             where: {
                 id: {
                     [sequelize.Op.ne]: userId,
@@ -36,24 +67,14 @@ class UserService {
                 {
                     model: Task,
                     attributes: [
-                        "status",
-                        [sequelize.fn("COUNT", sequelize.col("title")), "countTasks"],
                     ],
                 },
             ],
 
-            group: ["User.id",  "Tasks.status"],
+            group: ["User.id"],
 
         });
 
-        // users.map( (user) => {
-        //     let countAllTasks = 0;
-        //     user.["Tasks"].map( (el) => {
-        //         countAllTasks = countAllTasks + el.countTasks;
-        //     });
-        //     user.["allTasks"] = countAllTasks;
-        //     countAllTasks = 0;
-        // });
         return users;
     }
 
