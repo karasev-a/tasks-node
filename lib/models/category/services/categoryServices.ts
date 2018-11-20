@@ -2,7 +2,8 @@ import { Category, ICategoryAttributes } from "../category";
 import * as sequelize from "sequelize";
 import { UsersCategories } from "../../users-categories/usersCategories";
 import { User } from "../../user/user";
-import { Roles } from "../../task/task";
+import { Roles, Task, Statuses } from "../../task/task";
+import { all } from "bluebird";
 
 class TaskService {
 
@@ -67,5 +68,54 @@ class TaskService {
         });
     }
 
+    public async getCategoryStatistics() {
+        const allTasks: any = {
+            attributes: ["name", "id",
+                [sequelize.fn("COUNT", sequelize.col("Tasks.id")), "all"],
+            ],
+            include: [
+                {
+                    model: Task,
+                    attributes: [],
+                },
+            ],
+            group: ["Category.id"],
+        };
+        const openTasks: any = {
+            attributes: ["name", "id",
+                [sequelize.fn("COUNT", sequelize.col("Tasks.id")), "open"],
+            ],
+            include: [
+                {
+                    model: Task,
+                    where: {
+                        status: Statuses.Open,
+                    },
+                    attributes: [
+                    ],
+                },
+            ],
+            group: ["Category.id"],
+        };
+
+        const tasksA = await Category.findAll(allTasks).map( (el) => el.dataValues) as any;
+        const tasksO = await Category.findAll(openTasks).map( (el) => el.dataValues) as any;
+        // Kludge for combaine result
+        const tasks = tasksO.map( (el) => {
+            const sameCat = tasksA.filter( (it, index) => {
+                if (it.name === el.name) {
+                    tasksA.splice(index, 1);
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+            el.all = sameCat[0].all;
+            return el;
+        });
+        tasksA.map( (el) => el.open = 0);
+
+        return tasks.concat(tasksA);
+    }
 }
 export default new TaskService();

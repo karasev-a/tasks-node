@@ -7,11 +7,12 @@ import { Roles } from "../../task/task";
 
 const router: Router = Router();
 
+router.get("/statistics", handleErrorAsync(categoryController.getCategoriesStatistic));
 router.get("/managerTasks", permit(Roles.manager, Roles.admin),
     handleErrorAsync(categoryController.getCategoriesOnReview));
 router.get("/:categoryId", handleErrorAsync(categoryController.getOneCategory));
-router.delete("/:categoryController", handleErrorAsync(categoryController.deleteCategory));
-router.put("/categoryController", handleErrorAsync(categoryController.updateCategory));
+router.delete("/:categoryId", handleErrorAsync(categoryController.deleteCategory));
+router.put("/:categoryId", handleErrorAsync(categoryController.updateCategory));
 router.post("/", handleErrorAsync(categoryController.createNewCategory));
 router.get("/", handleErrorAsync(categoryController.getAllCategories));
 
