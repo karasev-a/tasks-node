@@ -8,6 +8,7 @@ import UserController from "../user.controller";
 const router: Router = Router();
 
 router.get("/admin/statistic", permit(Roles.admin), handleErrorAsync(UserController.getAllWithStatistic));
+router.get("/admin", permit(Roles.admin), handleErrorAsync(UserController.getAllWithoutLoginUser));
 router.get("/profile", UserController.getProfileData);
 router.get("/:userId", UserController.getById);
 router.delete("/:userId", UserController.delete);
