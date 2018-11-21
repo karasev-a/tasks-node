@@ -8,7 +8,7 @@
     "build": "tsc",
     "dev": "ts-node ./server.ts",
     "watch": "ts-node-dev ./server.ts",
-    "start": "nodemon ./dist/server.js",
+    "start": "node ./dist/server.js",
     "prod": "npm run build && npm run start",
     "seeders": "node_modules/.bin/sequelize db:seed:all",
     "migrations": "node_modules/.bin/sequelize db:migrate"

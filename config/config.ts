@@ -6,4 +6,11 @@ module.exports = {
     dialect: "mysql",
     seederStorage: "sequelize",
   },
+  production: {
+    username: "root",
+    password: "toor",
+    database: "orange",
+    host: "127.0.0.1",
+    dialect: "mysql",
+  },
 };
