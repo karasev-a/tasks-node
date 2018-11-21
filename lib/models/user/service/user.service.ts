@@ -13,6 +13,17 @@ class UserService {
         });
     }
 
+    public async getAllWithoutLoginUser(userId) {
+        return User.findAll({
+            where: {
+                id: {
+                    [sequelize.Op.ne]: userId,
+                },
+            },
+        });
+    }
+
+
     public async getAllWithStatistic(userId) {
 
         const users = await User.findAll({
