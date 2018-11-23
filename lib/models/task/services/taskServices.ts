@@ -18,6 +18,7 @@ class TaskService {
             subQuery: false,
             where: {
                 ...task,
+                // status: 2,
                 id: {
                     [sequelize.Op.notIn]: arrayOfTaskId,
                 },
