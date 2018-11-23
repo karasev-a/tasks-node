@@ -18,6 +18,7 @@ class TaskService {
             subQuery: false,
             where: {
                 ...task,
+                status: Statuses.Open,
                 id: {
                     [sequelize.Op.notIn]: arrayOfTaskId,
                 },
@@ -288,11 +289,11 @@ class TaskService {
             delete queryObj.offset;
         }
         if (queryObj.dateStart) {
-            otherParams['dateStart'] = queryObj.dateStart;
+            otherParams["dateStart"] = queryObj.dateStart;
             delete queryObj.dateStart;
         }
         if (queryObj.dateEnd) {
-            otherParams['dateEnd'] = queryObj.dateEnd;
+            otherParams["dateEnd"] = queryObj.dateEnd;
             delete queryObj.dateEnd;
         }
         task = queryObj;
