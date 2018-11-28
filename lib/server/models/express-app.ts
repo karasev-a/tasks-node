@@ -2,6 +2,8 @@
 import * as express from "express";
 import { NextFunction, Request, Response, Router } from "express";
 import * as bodyParser from "body-parser";
+import * as cors from "cors";
+
 import routes from "../../routes/index";
 import * as morgan from "morgan";
 import loggers from "../../tools/loggers";
@@ -20,7 +22,7 @@ class App {
 
   private _config(): void {
     this.app.use(bodyParser.json());
-    this.app.use(bodyParser.urlencoded({ extended: false }));
+    this.app.use(bodyParser.urlencoded({ extended: true }));
     global.logger.info.stream = {
       write: (message, encoding) => {
         global.logger.info(message);
@@ -30,20 +32,22 @@ class App {
     const port = process.env.PORT;
     this.app.set("port", port);
 
-    this.app.use((req: Request, res: Response, next: NextFunction) => {
-      res.setHeader("Access-Control-Allow-Origin", "*");
-      res.setHeader("Access-Control-Allow-Headers",
-      "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, "
-      + "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Cache-Control, Authorization");
-      res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
-      if (req.method === "OPTIONS") {
-        res.status(204).end();
-        return;
-      } else {
-        res.setHeader("Access-Control-Allow-Credentials", "true");
-        next();
-      }
-    });
+    // this.app.use((req: Request, res: Response, next: NextFunction) => {
+    //   res.setHeader("Access-Control-Allow-Origin", "*");
+    //   res.setHeader("Access-Control-Allow-Headers",
+    //   "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, "
+    //   + "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Cache-Control, Authorization");
+    //   res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
+    //   if (req.method === "OPTIONS") {
+    //     res.status(204).end();
+    //     return;
+    //   } else {
+    //     res.setHeader("Access-Control-Allow-Credentials", "true");
+    //     next();
+    //   }
+    // });
+
+    this.app.use(cors());
 
     this.app.use("/api/v1", routes);
     this.app.use("/login", routes);

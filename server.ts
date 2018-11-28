@@ -3,6 +3,7 @@ import * as http from "http";
 import app from "./lib/server/models/express-app";
 import DBService from "./lib/db/services/db-service";
 import * as socketIo from "socket.io";
+import { socketServer } from "./lib/server/models/sockets-base";
 
 const initApp = async () => {
   try {
@@ -10,17 +11,7 @@ const initApp = async () => {
     const port = app.get("port");
     const server = http.createServer(app);
     const io = socketIo(server);
-    io.of("/socket").on("connection", (socket) => {
-      console.log("user connected");
-
-      socket.on("disconnect", () => {
-        console.log("user disconnected");
-      });
-
-      socket.on("add-message", (message) => {
-        io.emit("message", { type: "new-message", text: message });
-      });
-    });
+    socketServer(io);
     server.listen(port, () => {
       global.logger.info(`Server started on port ${port}`);
     });

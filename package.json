@@ -23,6 +23,7 @@
     "@types/sequelize": "^4.27.27",
     "@types/socket.io": "^2.1.0",
     "bcrypt": "^1.0.3",
+    "cors": "^2.8.5",
     "dotenv": "^6.1.0",
     "enumify": "^1.0.4",
     "express": "^4.16.3",
