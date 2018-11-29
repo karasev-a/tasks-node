@@ -11,6 +11,9 @@ const initApp = async () => {
     const port = app.get("port");
     const server = http.createServer(app);
     const io = socketIo(server);
+    app.set("io", io);
+
+ 
     socketServer(io);
     server.listen(port, () => {
       global.logger.info(`Server started on port ${port}`);
