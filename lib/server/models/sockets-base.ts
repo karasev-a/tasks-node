@@ -1,16 +1,20 @@
 import loggers from "../../tools/loggers";
 
 export const socketServer = (io) => {
-    io.on("connection", (socket) => {
-        console.log("user connected");
+    io.clients = [];
+    io.on("connect", (socket) => {
 
-        // socket.on("add-message", (message) => {
-        //     console.log(JSON.stringify(message));
-        //     io.emit("message", { type: "new-message", text: message });
-        // });
+        socket.on("add-user", (data) => {
+            io.clients.push({
+                socketId: socket.id,
+                userId: data.userId,
+            });
+        });
+        global.logger.info("user connected");
 
         socket.on("disconnect", () => {
-            console.log("user disconnected");
+            io.clients = io.clients.filter( (client) => client.socketId !== socket.id);
+            global.logger.info("user disconnected");
         });
 
     });

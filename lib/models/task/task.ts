@@ -10,7 +10,8 @@ export interface ITaskAttributes {
   price?: number;
   description?: string;
   date?: Date;
-  status?: string;
+  // status?: string;
+  status?: number;
   userId?: number;
   categoryId?: number;
   createdAt?: Date;
@@ -59,12 +60,6 @@ export const Task = db.define<ITaskInstance, ITaskAttributes>("Task", {
     type: Sequelize.DATE,
     validate: {
       isDate: true,
-      // equalOrMoreToday(date) {
-      //   const curDate = new Date();
-      //   if (date < curDate ) {
-      //     throw new Error("date must be current date or more");
-      //   }
-      // },
     },
   },
   status: {

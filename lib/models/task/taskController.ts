@@ -4,8 +4,6 @@ import { ITaskAttributes, Roles } from "./task";
 import userService from "../user/service/user.service";
 import app from "../../server/models/express-app";
 
-
-
 class TaskController {
     public async getAllTasks(req, res) {
         const paramsOfGet = taskService.getTaskAndParamsFromGetQuery(req.query);
@@ -91,18 +89,22 @@ class TaskController {
         const taskId = parseInt(req.params.taskId, 10);
         const userId = req.userId;
         const result = await taskService.subscribeToTask(taskId, userId);
-        
+
         if (result) {
-            
             // emit subscription here
-            let io = app.get("io");
+            const io = app.get("io");
             const task = await taskService.getOneTask(taskId);
             const user = await userService.getById(userId);
             const subscriptionMessage = {
                 user,
                 task,
             };
-            io.emit("message", { type: "new-message", subscriptionMessage });
+            io.clients.forEach( (client) => {
+                if (client.userId === task.dataValues.userId) {
+                    io.to(`${client.socketId}`).emit("message", { type: "new-message", subscriptionMessage });
+                }
+            });
+
             res.status(200).send(result);
             global.logger.info(`User subscribed to task`);
         } else {
