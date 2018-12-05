@@ -269,12 +269,13 @@ class TaskService {
                     userId,
                     taskId,
                 });
-                tasksInUT.count++;
+                result["subPeople"] = ++tasksInUT.count;
             }
 
             if (tasksInUT.count >= task.dataValues.people) {
                 task.dataValues.status = Statuses.Pending;
-                result = this.updateTask(taskId, task.dataValues);
+                delete result["subPeople"];
+                result = await this.updateTask(taskId, task.dataValues);
             }
 
             return result;
