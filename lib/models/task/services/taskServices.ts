@@ -256,7 +256,7 @@ class TaskService {
         });
 
         if (!subscribedUser) {
-            let result;
+            let result = 0;
             const task = await Task.findById(taskId);
             const tasksInUT = await UsersTasks.findAndCountAll({
                 where: {
@@ -265,17 +265,17 @@ class TaskService {
             });
 
             if (tasksInUT.count < task.dataValues.people) {
-                result = await UsersTasks.create({
+                await UsersTasks.create({
                     userId,
                     taskId,
                 });
-                result["subPeople"] = ++tasksInUT.count;
+                result = ++tasksInUT.count;
             }
 
             if (tasksInUT.count >= task.dataValues.people) {
                 task.dataValues.status = Statuses.Pending;
-                delete result["subPeople"];
-                result = await this.updateTask(taskId, task.dataValues);
+                await this.updateTask(taskId, task.dataValues);
+                result = tasksInUT.count;
             }
 
             return result;

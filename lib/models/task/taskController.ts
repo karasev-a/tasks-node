@@ -105,9 +105,7 @@ class TaskController {
                 }
             });
 
-            if (result.subPeople) {
-                io.emit("task", {task, subscribedPeople: result.subPeople});
-            }
+            io.emit("task", {task, subscribedPeople: result});
 
             res.status(200).send(result);
             global.logger.info(`User subscribed to task`);
